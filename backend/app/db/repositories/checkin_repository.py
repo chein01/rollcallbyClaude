@@ -45,7 +45,7 @@ class CheckInRepository:
         streak_count = await self._calculate_streak(str(checkin.user_id), str(checkin.event_id))
         checkin.streak_count = streak_count
         
-        checkin_dict = checkin.dict(exclude={"id"})
+        checkin_dict = checkin.model_dump(exclude={"id"})
         result = await self.collection.insert_one(checkin_dict)
         checkin.id = result.inserted_id
         return checkin

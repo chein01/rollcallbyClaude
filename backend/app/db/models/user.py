@@ -25,9 +25,9 @@ class User(BaseDBModel):
     current_streak: int = Field(default=0)
     achievements: List[str] = Field(default_factory=list)
     
-    class Config:
-        collection = "users"
-        schema_extra = {
+    model_config = {
+        "collection": "users",
+        "json_schema_extra": {
             "example": {
                 "username": "johndoe",
                 "email": "john.doe@example.com",
@@ -40,6 +40,7 @@ class User(BaseDBModel):
                 "achievements": ["7_day_streak", "first_event_created"]
             }
         }
+    }
 
 
 class UserCreate(BaseModel):
@@ -73,8 +74,8 @@ class UserResponse(BaseModel):
     achievements: List[str]
     created_at: datetime
     
-    class Config:
-        schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "id": "60d5e1c7a0f5a5a5a5a5a5a5",
                 "username": "johndoe",
@@ -89,3 +90,4 @@ class UserResponse(BaseModel):
                 "created_at": "2023-01-01T00:00:00"
             }
         }
+    }

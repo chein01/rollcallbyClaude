@@ -68,7 +68,7 @@ class UserRepository:
         Returns:
             The created user with ID.
         """
-        user_dict = user.dict(exclude={"id"})
+        user_dict = user.model_dump(exclude={"id"})
         result = await self.collection.insert_one(user_dict)
         user.id = result.inserted_id
         return user
@@ -160,14 +160,53 @@ class UserRepository:
         """
         update_data = {
             "current_streak": current_streak,
-            "longest_streak": max(longest_streak, current_streak),
             "updated_at": User.updated_at.default_factory()
         }
         
-        return await self.update(user_id, update_data)
+        # Only update longest_streak if the new streak is longer
+        if longest_streak > 0:
+            update_data["longest_streak"] = longest_streak
+        
+        result = await self.collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise NotFoundException(detail=f"User with ID {user_id} not found")
+            
+        return await self.get_by_id(user_id)
+    
+    async def increment_checkins(self, user_id: str) -> User:
+        """Increment a user's total check-ins count.
+        
+        Args:
+            user_id: The ID of the user to update.
+            
+        Returns:
+            The updated user.
+            
+        Raises:
+            NotFoundException: If the user is not found.
+        """
+        if not ObjectId.is_valid(user_id):
+            raise NotFoundException(detail=f"Invalid user ID: {user_id}")
+        
+        result = await self.collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {
+                "$inc": {"total_checkins": 1},
+                "$set": {"updated_at": User.updated_at.default_factory()}
+            }
+        )
+        
+        if result.matched_count == 0:
+            raise NotFoundException(detail=f"User with ID {user_id} not found")
+            
+        return await self.get_by_id(user_id)
     
     async def add_achievement(self, user_id: str, achievement: str) -> User:
-        """Add an achievement to a user.
+        """Add an achievement to a user's achievements list.
         
         Args:
             user_id: The ID of the user to update.
@@ -181,44 +220,17 @@ class UserRepository:
         """
         if not ObjectId.is_valid(user_id):
             raise NotFoundException(detail=f"Invalid user ID: {user_id}")
-            
+        
+        # Only add the achievement if it's not already in the list
         result = await self.collection.update_one(
-            {"_id": ObjectId(user_id)},
             {
-                "$addToSet": {"achievements": achievement},
+                "_id": ObjectId(user_id),
+                "achievements": {"$ne": achievement}
+            },
+            {
+                "$push": {"achievements": achievement},
                 "$set": {"updated_at": User.updated_at.default_factory()}
             }
         )
         
-        if result.matched_count == 0:
-            raise NotFoundException(detail=f"User with ID {user_id} not found")
-            
-        return await self.get_by_id(user_id)
-    
-    async def increment_checkin_count(self, user_id: str) -> User:
-        """Increment a user's total check-in count.
-        
-        Args:
-            user_id: The ID of the user to update.
-            
-        Returns:
-            The updated user.
-            
-        Raises:
-            NotFoundException: If the user is not found.
-        """
-        if not ObjectId.is_valid(user_id):
-            raise NotFoundException(detail=f"Invalid user ID: {user_id}")
-            
-        result = await self.collection.update_one(
-            {"_id": ObjectId(user_id)},
-            {
-                "$inc": {"total_checkins": 1},
-                "$set": {"updated_at": User.updated_at.default_factory()}
-            }
-        )
-        
-        if result.matched_count == 0:
-            raise NotFoundException(detail=f"User with ID {user_id} not found")
-            
         return await self.get_by_id(user_id)
