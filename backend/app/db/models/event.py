@@ -16,13 +16,25 @@ class Event(BaseDBModel):
     creator_id: PyObjectId = Field(...)
     category: Optional[str] = Field(None, max_length=50)
     icon: Optional[str] = Field(None)  # Icon identifier or URL
-    is_public: bool = Field(default=True)  # Whether the event is visible to other users
+    is_public: bool = Field(default=False)  # Whether the event is visible to other users
     participants: List[PyObjectId] = Field(
         default_factory=list
     )  # Users who joined this event
+    invited_users: List[PyObjectId] = Field(
+        default_factory=list
+    )  # Users specifically invited to this event
     total_checkins: int = Field(
         default=0
     )  # Total number of check-ins across all participants
+    avg_streak: int = Field(
+        default=0
+    )  # Average streak across all participants
+    highest_streak: int = Field(
+        default=0
+    )  # Highest streak achieved in this event
+    streak_leaders: List[PyObjectId] = Field(
+        default_factory=list
+    )  # Top users with highest streaks
 
     model_config = {
         "collection": "events",
@@ -33,12 +45,22 @@ class Event(BaseDBModel):
                 "creator_id": "60d5e1c7a0f5a5a5a5a5a5a5",
                 "category": "Learning",
                 "icon": "code",
-                "is_public": True,
+                "is_public": False,
                 "participants": [
                     "60d5e1c7a0f5a5a5a5a5a5a5",
                     "60d5e1c7a0f5a5a5a5a5a5a6",
                 ],
+                "invited_users": [
+                    "60d5e1c7a0f5a5a5a5a5a5a8",
+                    "60d5e1c7a0f5a5a5a5a5a5a9",
+                ],
                 "total_checkins": 156,
+                "avg_streak": 12,
+                "highest_streak": 30,
+                "streak_leaders": [
+                    "60d5e1c7a0f5a5a5a5a5a5a5",
+                    "60d5e1c7a0f5a5a5a5a5a5a6",
+                ],
             }
         }
     }
@@ -51,7 +73,7 @@ class EventCreate(BaseModel):
     description: Optional[str] = Field(None, max_length=500)
     category: Optional[str] = Field(None, max_length=50)
     icon: Optional[str] = None
-    is_public: bool = Field(default=True)
+    is_public: bool = Field(default=False)
 
 
 class EventUpdate(BaseModel):
@@ -75,7 +97,11 @@ class EventResponse(BaseModel):
     icon: Optional[str] = None
     is_public: bool
     participants: List[str]
+    invited_users: List[str] = Field(default_factory=list)
     total_checkins: int
+    avg_streak: int = 0
+    highest_streak: int = 0
+    streak_leaders: List[str] = Field(default_factory=list)
     created_at: datetime
 
     model_config = {
@@ -87,12 +113,22 @@ class EventResponse(BaseModel):
                 "creator_id": "60d5e1c7a0f5a5a5a5a5a5a5",
                 "category": "Learning",
                 "icon": "code",
-                "is_public": True,
+                "is_public": False,
                 "participants": [
                     "60d5e1c7a0f5a5a5a5a5a5a5",
                     "60d5e1c7a0f5a5a5a5a5a5a6",
                 ],
+                "invited_users": [
+                    "60d5e1c7a0f5a5a5a5a5a5a8",
+                    "60d5e1c7a0f5a5a5a5a5a5a9",
+                ],
                 "total_checkins": 156,
+                "avg_streak": 12,
+                "highest_streak": 30,
+                "streak_leaders": [
+                    "60d5e1c7a0f5a5a5a5a5a5a5",
+                    "60d5e1c7a0f5a5a5a5a5a5a6",
+                ],
                 "created_at": "2023-01-01T00:00:00",
             }
         }

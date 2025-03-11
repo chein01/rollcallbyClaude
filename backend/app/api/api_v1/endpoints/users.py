@@ -1,19 +1,19 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List, Optional
 from bson import ObjectId
-
 from app.db.models.user import User
 from app.db.repositories.user_repository import UserRepository
 from app.db.models.user import UserCreate, UserResponse, UserUpdate
+from main import db
+from app.core.security import get_password_hash
 
 router = APIRouter()
 
 
 # Dependency to get user repository
 async def get_user_repository():
-    from app.main import app
 
-    return UserRepository(app.mongodb)
+    return UserRepository(db)
 
 
 @router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
@@ -37,8 +37,10 @@ async def create_user(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Username already taken"
             )
 
-    # Create user
-    new_user = User(**user.dict())
+    # Create user with hashed password
+    user_data = user.dict()
+    user_data["hashed_password"] = get_password_hash(user_data.pop("password"))
+    new_user = User(**user_data)
     created_user = await repo.create(new_user)
     return created_user
 

@@ -1,12 +1,13 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Dict, Any
 from datetime import datetime, timedelta
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from app.db.models.checkin import CheckIn, UserEventStreak
 from app.core.exceptions import NotFoundException, BadRequestException
+from app.db.repositories.base_repository import BaseRepository
 
-class CheckInRepository:
+class CheckInRepository(BaseRepository[CheckIn, CheckIn, Dict[str, Any]]):
     """Repository for CheckIn model database operations.
     
     This class handles all database interactions for the CheckIn model.
@@ -14,23 +15,7 @@ class CheckInRepository:
     def __init__(self, db: AsyncIOMotorDatabase):
         self.db = db
         self.collection = db.checkins
-    
-    async def get_by_id(self, checkin_id: str) -> Optional[CheckIn]:
-        """Get a check-in by ID.
-        
-        Args:
-            checkin_id: The ID of the check-in to retrieve.
-            
-        Returns:
-            The check-in if found, None otherwise.
-        """
-        if not ObjectId.is_valid(checkin_id):
-            return None
-            
-        checkin_data = await self.collection.find_one({"_id": ObjectId(checkin_id)})
-        if checkin_data:
-            return CheckIn(**checkin_data)
-        return None
+        self.model_class = CheckIn
     
     async def create(self, checkin: CheckIn) -> CheckIn:
         """Create a new check-in.
@@ -45,54 +30,8 @@ class CheckInRepository:
         streak_count = await self._calculate_streak(str(checkin.user_id), str(checkin.event_id))
         checkin.streak_count = streak_count
         
-        checkin_dict = checkin.model_dump(exclude={"id"})
-        result = await self.collection.insert_one(checkin_dict)
-        checkin.id = result.inserted_id
-        return checkin
-    
-    async def update(self, checkin_id: str, update_data: dict) -> CheckIn:
-        """Update a check-in.
-        
-        Args:
-            checkin_id: The ID of the check-in to update.
-            update_data: The data to update.
-            
-        Returns:
-            The updated check-in.
-            
-        Raises:
-            NotFoundException: If the check-in is not found.
-        """
-        if not ObjectId.is_valid(checkin_id):
-            raise NotFoundException(detail=f"Invalid check-in ID: {checkin_id}")
-            
-        # Add updated_at timestamp
-        update_data["updated_at"] = CheckIn.updated_at.default_factory()
-        
-        result = await self.collection.update_one(
-            {"_id": ObjectId(checkin_id)},
-            {"$set": update_data}
-        )
-        
-        if result.matched_count == 0:
-            raise NotFoundException(detail=f"Check-in with ID {checkin_id} not found")
-            
-        return await self.get_by_id(checkin_id)
-    
-    async def delete(self, checkin_id: str) -> bool:
-        """Delete a check-in.
-        
-        Args:
-            checkin_id: The ID of the check-in to delete.
-            
-        Returns:
-            True if the check-in was deleted, False otherwise.
-        """
-        if not ObjectId.is_valid(checkin_id):
-            return False
-            
-        result = await self.collection.delete_one({"_id": ObjectId(checkin_id)})
-        return result.deleted_count > 0
+        # Use the parent class's create method
+        return await super().create(checkin)
     
     async def get_by_user_and_event(self, user_id: str, event_id: str, skip: int = 0, limit: int = 100) -> List[CheckIn]:
         """Get check-ins for a specific user and event.
@@ -233,8 +172,17 @@ class CheckInRepository:
             # Checked in yesterday, increment the streak
             return latest_checkin.streak_count + 1
         else:
-            # Streak broken, start a new one
-            return 1
+            # Check if a streak freeze is available and can be used
+            from app.db.repositories.streak_freeze_repository import StreakFreezeRepository
+            streak_freeze_repo = StreakFreezeRepository()
+            freeze_used = await streak_freeze_repo.use_streak_freeze(user_id, event_id)
+            
+            if freeze_used:
+                # Streak freeze was used, maintain the streak but don't increment
+                return latest_checkin.streak_count
+            else:
+                # Streak broken, start a new one
+                return 1
     
     async def get_user_event_streak(self, user_id: str, event_id: str) -> UserEventStreak:
         """Get the streak information for a user and event.
@@ -319,3 +267,38 @@ class CheckInRepository:
             streaks.append(streak)
             
         return streaks
+        
+    async def get_event_leaderboard(self, event_id: str, limit: int = 10) -> List[UserEventStreak]:
+        """Get leaderboard data for a specific event.
+        
+        Args:
+            event_id: The ID of the event.
+            limit: Maximum number of users to return.
+            
+        Returns:
+            List of user streak information for the event, sorted by current streak.
+        """
+        if not ObjectId.is_valid(event_id):
+            return []
+            
+        # Get all users who have checked in to this event
+        pipeline = [
+            {"$match": {"event_id": ObjectId(event_id)}},
+            {"$group": {"_id": "$user_id"}}
+        ]
+        
+        cursor = self.collection.aggregate(pipeline)
+        user_ids = await cursor.to_list(length=100)
+        
+        # Get streak information for each user
+        streaks = []
+        for user_data in user_ids:
+            user_id = str(user_data["_id"])
+            streak = await self.get_user_event_streak(user_id, event_id)
+            streaks.append(streak)
+            
+        # Sort by current streak (descending)
+        streaks.sort(key=lambda x: x.current_streak, reverse=True)
+        
+        # Return top users
+        return streaks[:limit]

@@ -7,7 +7,6 @@ from app.db.models.base import BaseDBModel, PyObjectId
 
 class CheckIn(BaseDBModel):
     """Check-in model for tracking daily user activity.
-
     This model represents a user checking in to an event on a specific day.
     """
 
@@ -29,7 +28,7 @@ class CheckIn(BaseDBModel):
                 "mood": "productive",
                 "streak_count": 7,
             }
-        }
+        },
     }
 
 

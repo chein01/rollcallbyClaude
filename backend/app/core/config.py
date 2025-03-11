@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     
     # Database
-    MONGODB_URL: str = Field(..., env="MONGODB_URL")
+    DATABASE_URL: str = Field(default="mysql+aiomysql://root:password@localhost:3306/rollcall", env="DATABASE_URL")
     DATABASE_NAME: str = Field(default="rollcall", env="DATABASE_NAME")
     
     # CORS

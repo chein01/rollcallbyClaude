@@ -85,6 +85,54 @@ docker build -t rollcall-backend .
 docker run -p 8000:8000 rollcall-backend
 ```
 
+## Running with Docker
+
+This project is configured to run with Docker and Docker Compose, making it easy to set up and run consistently across different environments.
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+### Setup
+
+1. Clone the repository
+2. Navigate to the backend directory
+3. Copy the example environment file: `cp .env.example .env`
+4. Modify the `.env` file with your specific configuration if needed
+
+### Running the Application
+
+To start the application and database:
+
+```bash
+docker-compose up -d
+```
+
+This will:
+- Build the FastAPI application image
+- Start the MySQL database
+- Connect the services together
+- Make the API available at http://localhost:8000
+
+To view logs:
+
+```bash
+docker-compose logs -f
+```
+
+To stop the application:
+
+```bash
+docker-compose down
+```
+
+To stop the application and remove volumes (this will delete database data):
+
+```bash
+docker-compose down -v
+```
+
 ## API Documentation
 
 The API documentation is automatically generated and available at:
