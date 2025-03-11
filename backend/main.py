@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.core.config import settings
+from app.db.database import get_db
 
 # Create FastAPI app
 app = FastAPI(
@@ -23,9 +23,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Database connection
-mongo_client = AsyncIOMotorClient(settings.MONGODB_URL)
-db = mongo_client[settings.DATABASE_NAME]
+# Database connection is handled by SQLAlchemy in app/db/database.py
 
 # Include API routes
 from app.api.api_v1.api import api_router
@@ -42,13 +40,14 @@ async def root():
 
 # Startup and shutdown events
 @app.on_event("startup")
-async def startup_db_client():
-    app.mongodb_client = AsyncIOMotorClient(settings.MONGODB_URL)
-    app.mongodb = app.mongodb_client[settings.DATABASE_NAME]
+async def startup_event():
+    # Any startup tasks can be added here
+    pass
 
 @app.on_event("shutdown")
-async def shutdown_db_client():
-    app.mongodb_client.close()
+async def shutdown_event():
+    # Any shutdown tasks can be added here
+    pass
 
 if __name__ == "__main__":
     import uvicorn

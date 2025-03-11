@@ -57,7 +57,7 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         return result.scalars().all()
 
     async def update_streak(
-        self, user_id: str, current_streak: int, longest_streak: int
+        self, user_id: int, current_streak: int, longest_streak: int
     ) -> User:
         """Update a user's streak information.
 
@@ -81,16 +81,21 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         if longest_streak > 0:
             update_data["longest_streak"] = longest_streak
 
-        result = await self.collection.update_one(
-            {"_id": ObjectId(user_id)}, {"$set": update_data}
-        )
-
-        if result.matched_count == 0:
+        # Get the user to update
+        user = await self.get_by_id(user_id)
+        if not user:
             raise NotFoundException(detail=f"User with ID {user_id} not found")
 
-        return await self.get_by_id(user_id)
+        # Update the user
+        for key, value in update_data.items():
+            setattr(user, key, value)
 
-    async def increment_checkins(self, user_id: str) -> User:
+        await self.db.commit()
+        await self.db.refresh(user)
+
+        return user
+
+    async def increment_checkins(self, user_id: int) -> User:
         """Increment a user's total check-ins count.
 
         Args:
@@ -102,23 +107,22 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         Raises:
             NotFoundException: If the user is not found.
         """
-        if not ObjectId.is_valid(user_id):
-            raise NotFoundException(detail=f"Invalid user ID: {user_id}")
-
-        result = await self.collection.update_one(
-            {"_id": ObjectId(user_id)},
-            {
-                "$inc": {"total_checkins": 1},
-                "$set": {"updated_at": User.updated_at.default_factory()},
-            },
-        )
-
-        if result.matched_count == 0:
+        # Get the user to update
+        user = await self.get_by_id(user_id)
+        if not user:
             raise NotFoundException(detail=f"User with ID {user_id} not found")
 
-        return await self.get_by_id(user_id)
+        # Increment total_checkins
+        user.total_checkins += 1
+        user.updated_at = User.updated_at.default_factory()
 
-    async def add_achievement(self, user_id: str, achievement: str) -> User:
+        # Commit changes
+        await self.db.commit()
+        await self.db.refresh(user)
+
+        return user
+
+    async def add_achievement(self, user_id: int, achievement: str) -> User:
         """Add an achievement to a user's achievements list.
 
         Args:
@@ -131,16 +135,20 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         Raises:
             NotFoundException: If the user is not found.
         """
-        if not ObjectId.is_valid(user_id):
-            raise NotFoundException(detail=f"Invalid user ID: {user_id}")
+        # Get the user to update
+        user = await self.get_by_id(user_id)
+        if not user:
+            raise NotFoundException(detail=f"User with ID {user_id} not found")
 
         # Only add the achievement if it's not already in the list
-        result = await self.collection.update_one(
-            {"_id": ObjectId(user_id), "achievements": {"$ne": achievement}},
-            {
-                "$push": {"achievements": achievement},
-                "$set": {"updated_at": User.updated_at.default_factory()},
-            },
-        )
+        achievements = user.achievements if user.achievements else []
+        if achievement not in achievements:
+            achievements.append(achievement)
+            user.achievements = achievements
+            user.updated_at = User.updated_at.default_factory()
 
-        return await self.get_by_id(user_id)
+            # Commit changes
+            await self.db.commit()
+            await self.db.refresh(user)
+
+        return user

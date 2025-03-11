@@ -1,6 +1,6 @@
 import pytest
+import uuid
 from fastapi.testclient import TestClient
-from bson import ObjectId
 
 from main import app
 from app.db.models.user import User
@@ -88,7 +88,7 @@ def test_get_user_by_id(created_test_user):
 
 def test_get_user_not_found():
     """Test getting a user that doesn't exist."""
-    non_existent_id = str(ObjectId())
+    non_existent_id = str(uuid.uuid4())
     response = client.get(f"/api/v1/users/{non_existent_id}")
     assert response.status_code == 404
     assert f"User with ID {non_existent_id} not found" in response.json()["detail"]
@@ -113,7 +113,7 @@ def test_update_user(created_test_user):
 
 def test_update_user_not_found():
     """Test updating a user that doesn't exist."""
-    non_existent_id = str(ObjectId())
+    non_existent_id = str(uuid.uuid4())
     update_data = {"name": "Updated Name"}
     response = client.put(f"/api/v1/users/{non_existent_id}", json=update_data)
     assert response.status_code == 404
@@ -131,7 +131,7 @@ def test_delete_user(created_test_user):
 
 def test_delete_user_not_found():
     """Test deleting a user that doesn't exist."""
-    non_existent_id = str(ObjectId())
+    non_existent_id = str(uuid.uuid4())
     response = client.delete(f"/api/v1/users/{non_existent_id}")
     assert response.status_code == 404
     assert f"User with ID {non_existent_id} not found" in response.json()["detail"]

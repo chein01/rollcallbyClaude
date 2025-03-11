@@ -1,18 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List, Optional
-from bson import ObjectId
 from app.db.models.user import User
 from app.db.repositories.user_repository import UserRepository
 from app.db.models.user import UserCreate, UserResponse, UserUpdate
-from main import db
+from app.db.database import get_db
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import get_password_hash
 
 router = APIRouter()
 
 
 # Dependency to get user repository
-async def get_user_repository():
-
+async def get_user_repository(db: AsyncSession = Depends(get_db)):
     return UserRepository(db)
 
 
@@ -62,7 +61,7 @@ async def get_leaderboard(
 
 
 @router.get("/{user_id}", response_model=UserResponse)
-async def get_user(user_id: str, repo: UserRepository = Depends(get_user_repository)):
+async def get_user(user_id: int, repo: UserRepository = Depends(get_user_repository)):
     """Get a specific user by ID."""
     user = await repo.get_by_id(user_id)
     if not user:
@@ -75,7 +74,7 @@ async def get_user(user_id: str, repo: UserRepository = Depends(get_user_reposit
 
 @router.put("/{user_id}", response_model=UserResponse)
 async def update_user(
-    user_id: str,
+    user_id: int,
     user_update: UserUpdate,
     repo: UserRepository = Depends(get_user_repository),
 ):
@@ -89,7 +88,7 @@ async def update_user(
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(
-    user_id: str, repo: UserRepository = Depends(get_user_repository)
+    user_id: int, repo: UserRepository = Depends(get_user_repository)
 ):
     """Delete a user."""
     deleted = await repo.delete(user_id)

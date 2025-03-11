@@ -1,6 +1,6 @@
 # Roll Call by AI - Backend
 
-This is the backend service for the Roll Call by AI application, built with FastAPI and MongoDB.
+This is the backend service for the Roll Call by AI application, built with FastAPI and MySQL.
 
 ## Project Structure
 
@@ -43,7 +43,7 @@ backend/
 ### Prerequisites
 
 - Python 3.8+
-- MongoDB
+- MySQL
 - Docker (optional)
 
 ### Local Development

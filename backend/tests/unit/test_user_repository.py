@@ -34,16 +34,16 @@ class TestUserRepository:
     
     async def test_get_by_id(self, user_repository, test_user):
         # Act
-        retrieved_user = await user_repository.get_by_id(str(test_user.id))
+        retrieved_user = await user_repository.get_by_id(test_user.id)
         
         # Assert
         assert retrieved_user is not None
-        assert str(retrieved_user.id) == str(test_user.id)
+        assert retrieved_user.id == test_user.id
         assert retrieved_user.email == test_user.email
     
     async def test_get_by_id_not_found(self, user_repository):
         # Act
-        non_existent_id = str(ObjectId())
+        non_existent_id = 99999  # Using a non-existent integer ID
         retrieved_user = await user_repository.get_by_id(non_existent_id)
         
         # Assert
@@ -87,14 +87,14 @@ class TestUserRepository:
         
         # Assert
         assert len(users) >= 1
-        assert any(str(user.id) == str(test_user.id) for user in users)
+        assert any(user.id == test_user.id for user in users)
     
     async def test_update(self, user_repository, test_user):
         # Arrange
         update_data = {"name": "Updated Name", "bio": "New bio"}
         
         # Act
-        updated_user = await user_repository.update(str(test_user.id), update_data)
+        updated_user = await user_repository.update(test_user.id, update_data)
         
         # Assert
         assert updated_user.name == "Updated Name"

@@ -1,44 +1,42 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List, Optional
-from bson import ObjectId
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.event import Event, EventCreate, EventUpdate, EventResponse
 from app.db.repositories.event_repository import EventRepository
 from app.db.repositories.user_repository import UserRepository
 from app.db.repositories.checkin_repository import CheckInRepository
 from app.db.models.checkin import UserEventStreak
+from app.db.database import get_db
 
 router = APIRouter()
 
 
 # Dependencies
-async def get_event_repository():
-    from app.main import app
-    return EventRepository(app.mongodb)
+async def get_event_repository(db: AsyncSession = Depends(get_db)):
+    return EventRepository(db)
 
 
-async def get_user_repository():
-    from app.main import app
-    return UserRepository(app.mongodb)
+async def get_user_repository(db: AsyncSession = Depends(get_db)):
+    return UserRepository(db)
 
 
-async def get_checkin_repository():
-    from app.main import app
-    return CheckInRepository(app.mongodb)
+async def get_checkin_repository(db: AsyncSession = Depends(get_db)):
+    return CheckInRepository(db)
 
 
 @router.post("/", response_model=EventResponse, status_code=status.HTTP_201_CREATED)
 async def create_event(
     event: EventCreate,
-    current_user_id: str,
+    current_user_id: int,
     repo: EventRepository = Depends(get_event_repository),
 ):
     """Create a new event."""
     # Create event with current user as creator
     new_event = Event(
         **event.model_dump(),
-        creator_id=ObjectId(current_user_id),
-        participants=[ObjectId(current_user_id)]  # Creator is automatically a participant
+        creator_id=current_user_id,
+        participants=[current_user_id]  # Creator is automatically a participant
     )
     
     created_event = await repo.create(new_event)
@@ -57,7 +55,7 @@ async def get_events(
 
 @router.get("/my", response_model=List[EventResponse])
 async def get_my_events(
-    current_user_id: str,
+    current_user_id: int,
     skip: int = 0, 
     limit: int = 100, 
     repo: EventRepository = Depends(get_event_repository)
@@ -68,7 +66,7 @@ async def get_my_events(
 
 @router.get("/participating", response_model=List[EventResponse])
 async def get_participating_events(
-    current_user_id: str,
+    current_user_id: int,
     skip: int = 0, 
     limit: int = 100, 
     repo: EventRepository = Depends(get_event_repository)
@@ -79,7 +77,7 @@ async def get_participating_events(
 
 @router.get("/{event_id}", response_model=EventResponse)
 async def get_event(
-    event_id: str, 
+    event_id: int, 
     repo: EventRepository = Depends(get_event_repository)
 ):
     """Get a specific event by ID."""
@@ -94,9 +92,9 @@ async def get_event(
 
 @router.put("/{event_id}", response_model=EventResponse)
 async def update_event(
-    event_id: str,
+    event_id: int,
     event_update: EventUpdate,
-    current_user_id: str,
+    current_user_id: int,
     repo: EventRepository = Depends(get_event_repository),
 ):
     """Update an event's information."""
@@ -108,7 +106,7 @@ async def update_event(
             detail=f"Event with ID {event_id} not found"
         )
     
-    if str(event.creator_id) != current_user_id:
+    if event.creator_id != current_user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only the creator can update this event"
@@ -123,8 +121,8 @@ async def update_event(
 
 @router.delete("/{event_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_event(
-    event_id: str, 
-    current_user_id: str,
+    event_id: int, 
+    current_user_id: int,
     repo: EventRepository = Depends(get_event_repository)
 ):
     """Delete an event."""
@@ -136,7 +134,7 @@ async def delete_event(
             detail=f"Event with ID {event_id} not found"
         )
     
-    if str(event.creator_id) != current_user_id:
+    if event.creator_id != current_user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only the creator can delete this event"
@@ -153,8 +151,8 @@ async def delete_event(
 
 @router.post("/{event_id}/join", response_model=EventResponse)
 async def join_event(
-    event_id: str,
-    current_user_id: str,
+    event_id: int,
+    current_user_id: int,
     repo: EventRepository = Depends(get_event_repository),
 ):
     """Join an event as a participant."""
@@ -167,8 +165,8 @@ async def join_event(
 
 @router.post("/{event_id}/leave", response_model=EventResponse)
 async def leave_event(
-    event_id: str,
-    current_user_id: str,
+    event_id: int,
+    current_user_id: int,
     repo: EventRepository = Depends(get_event_repository),
 ):
     """Leave an event as a participant."""
@@ -180,7 +178,7 @@ async def leave_event(
             detail=f"Event with ID {event_id} not found"
         )
     
-    if str(event.creator_id) == current_user_id:
+    if event.creator_id == current_user_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The creator cannot leave the event"
@@ -195,7 +193,7 @@ async def leave_event(
 
 @router.get("/{event_id}/leaderboard", response_model=List[UserEventStreak])
 async def get_event_leaderboard(
-    event_id: str,
+    event_id: int,
     limit: int = 10,
     repo: CheckInRepository = Depends(get_checkin_repository),
 ):
@@ -210,9 +208,9 @@ async def get_event_leaderboard(
 
 @router.post("/{event_id}/invite/{user_id}", response_model=EventResponse)
 async def invite_user(
-    event_id: str,
-    user_id: str,
-    current_user_id: str,
+    event_id: int,
+    user_id: int,
+    current_user_id: int,
     repo: EventRepository = Depends(get_event_repository),
     user_repo: UserRepository = Depends(get_user_repository),
 ):
@@ -233,7 +231,7 @@ async def invite_user(
             detail=f"Event with ID {event_id} not found"
         )
     
-    if str(event.creator_id) != current_user_id and ObjectId(current_user_id) not in event.participants:
+    if event.creator_id != current_user_id and current_user_id not in event.participants:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only the creator or participants can invite users"
