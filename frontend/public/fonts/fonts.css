@@ -1,0 +1,16 @@
+/* Custom Fonts */
+
+@font-face {
+  font-family: 'Hartwell Alt';
+  /* Temporarily using system fonts until the actual font files are available */
+  src: local('Arial Bold'), local('Helvetica Bold');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Note: When the actual font files (HartwellAlt-Bold.woff2 and HartwellAlt-Bold.woff) 
+   become available, update the src attribute with:
+   src: url('./HartwellAlt-Bold.woff2') format('woff2'),
+        url('./HartwellAlt-Bold.woff') format('woff');
+*/

@@ -1,5 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  theme: {
+    extend: {
+      fontFamily: {
+        hartwell: ['Hartwell Alt', 'sans-serif'],
+      },
+    },
+  },
     content: [
         './src/**/*.{js,ts,jsx,tsx,mdx}',
     ],
@@ -12,4 +19,4 @@ module.exports = {
         },
     },
     plugins: [],
-} 
+}

@@ -1,0 +1,78 @@
+/* Register page specific styles */
+
+/* These styles complement the global styles defined in globals.css */
+
+.register-form-container {
+  width: 100%;
+}
+
+.name-fields-container {
+  display: flex;
+  gap: 1rem;
+}
+
+.name-field {
+  flex: 1;
+}
+
+.password-requirements {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+
+.password-strength {
+  height: 4px;
+  margin-top: 0.5rem;
+  border-radius: 2px;
+  background-color: #e5e7eb;
+  overflow: hidden;
+}
+
+.password-strength-indicator {
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.strength-weak {
+  width: 33%;
+  background-color: #ef4444;
+}
+
+.strength-medium {
+  width: 66%;
+  background-color: #f59e0b;
+}
+
+.strength-strong {
+  width: 100%;
+  background-color: #10b981;
+}
+
+.terms-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.terms-checkbox input {
+  width: 1rem;
+  height: 1rem;
+}
+
+.terms-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.terms-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.terms-link:hover {
+  text-decoration: underline;
+}

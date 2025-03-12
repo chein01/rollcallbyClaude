@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Define which paths are protected (require authentication)
 const protectedPaths = [
-  '/dashboard',
+  // '/dashboard', // Temporarily removed to allow access without authentication
   '/profile',
   '/settings',
 ];

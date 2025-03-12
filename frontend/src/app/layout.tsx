@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "../../public/fonts/fonts.css";
 import { Providers } from './providers';
+import Header from '@/components/Header';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Roll Call by AI",
+  title: "RollCallByCusor",
   description: "A modern attendance tracking system",
 };
 
@@ -27,9 +29,10 @@ export default function RootLayout({
     <html lang="en">
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased font-hartwell`}
       >
         <Providers>
+          <Header />
           {children}
         </Providers>
       </body>
