@@ -76,7 +76,6 @@ class BaseRepository(Generic[T, CreateT, UpdateT]):
             await self.db.commit()
             await self.db.refresh(db_obj)
 
-
             return db_obj
         else:
             create_data = data
@@ -88,7 +87,6 @@ class BaseRepository(Generic[T, CreateT, UpdateT]):
         self.db.add(db_obj)
         await self.db.commit()
         await self.db.refresh(db_obj)
-
 
         return db_obj
 
@@ -141,7 +139,6 @@ class BaseRepository(Generic[T, CreateT, UpdateT]):
         # Commit changes
         await self.db.commit()
         await self.db.refresh(db_obj)
-
 
         return db_obj
 

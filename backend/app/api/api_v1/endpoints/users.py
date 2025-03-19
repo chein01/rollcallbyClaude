@@ -6,6 +6,7 @@ from app.db.models.user import UserCreate, UserResponse, UserUpdate
 from app.db.database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import get_password_hash
+from app.api.api_v1.endpoints.auth import get_current_user
 
 router = APIRouter()
 
@@ -46,7 +47,10 @@ async def create_user(
 
 @router.get("/", response_model=List[UserResponse])
 async def get_users(
-    skip: int = 0, limit: int = 100, repo: UserRepository = Depends(get_user_repository)
+    skip: int = 0,
+    limit: int = 100,
+    repo: UserRepository = Depends(get_user_repository),
+    current_user: User = Depends(get_current_user),
 ):
     """Get all users with pagination."""
     return await repo.get_all(skip=skip, limit=limit)
@@ -54,14 +58,20 @@ async def get_users(
 
 @router.get("/leaderboard", response_model=List[UserResponse])
 async def get_leaderboard(
-    limit: int = 10, repo: UserRepository = Depends(get_user_repository)
+    limit: int = 10,
+    repo: UserRepository = Depends(get_user_repository),
+    current_user: User = Depends(get_current_user),
 ):
     """Get user leaderboard by streak."""
     return await repo.get_leaderboard(limit=limit)
 
 
 @router.get("/{user_id}", response_model=UserResponse)
-async def get_user(user_id: int, repo: UserRepository = Depends(get_user_repository)):
+async def get_user(
+    user_id: int,
+    repo: UserRepository = Depends(get_user_repository),
+    current_user: User = Depends(get_current_user),
+):
     """Get a specific user by ID."""
     user = await repo.get_by_id(user_id)
     if not user:
@@ -77,8 +87,16 @@ async def update_user(
     user_id: int,
     user_update: UserUpdate,
     repo: UserRepository = Depends(get_user_repository),
+    current_user: User = Depends(get_current_user),
 ):
     """Update a user's information."""
+    # Only allow users to update their own information
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have permission to update other users' information",
+        )
+
     try:
         updated_user = await repo.update(user_id, user_update.dict(exclude_unset=True))
         return updated_user
@@ -88,9 +106,18 @@ async def update_user(
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(
-    user_id: int, repo: UserRepository = Depends(get_user_repository)
+    user_id: int,
+    repo: UserRepository = Depends(get_user_repository),
+    current_user: User = Depends(get_current_user),
 ):
     """Delete a user."""
+    # Only allow users to delete their own account
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have permission to delete other users' accounts",
+        )
+
     deleted = await repo.delete(user_id)
     if not deleted:
         raise HTTPException(

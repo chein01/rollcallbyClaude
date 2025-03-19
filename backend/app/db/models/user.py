@@ -22,6 +22,10 @@ class User(BaseDBModel):
     profile_image = Column(String(255), nullable=True)
     bio = Column(String(500), nullable=True)
     last_login = Column(DateTime, nullable=True)
+    
+    # Password reset fields
+    reset_token = Column(String(100), nullable=True, unique=True, index=True)
+    reset_token_expires_at = Column(DateTime, nullable=True)
 
     # Achievement tracking
     total_checkins = Column(Integer, default=0, nullable=False)

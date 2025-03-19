@@ -2,7 +2,8 @@
 
 // Standard error response format
 export interface ErrorResponse {
-  message: string;
+  message?: string;
+  detail?: string;  // FastAPI error format
   code?: string;
   details?: Record<string, any>;
 }

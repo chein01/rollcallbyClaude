@@ -8,6 +8,8 @@ from app.db.repositories.user_repository import UserRepository
 from app.db.repositories.event_repository import EventRepository
 from app.db.models.checkin import CheckInCreate, CheckInResponse, UserEventStreak
 from app.db.database import get_db
+from app.api.api_v1.endpoints.auth import get_current_user
+from app.db.models.user import User
 
 router = APIRouter()
 
@@ -70,8 +72,16 @@ async def get_checkins(
     skip: int = 0,
     limit: int = 100,
     repo: CheckInRepository = Depends(get_checkin_repository),
+    current_user: User = Depends(get_current_user),
 ):
     """Get all check-ins with optional filtering by user ID."""
+    # Only allow users to view their own check-ins
+    if user_id and user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have permission to view other users' check-ins",
+        )
+
     if user_id:
         return await repo.get_by_user(user_id, skip=skip, limit=limit)
     return await repo.get_all(skip=skip, limit=limit)
@@ -93,9 +103,18 @@ async def get_checkin(
 
 @router.get("/user/{user_id}/latest", response_model=CheckInResponse)
 async def get_latest_checkin(
-    user_id: int, repo: CheckInRepository = Depends(get_checkin_repository)
+    user_id: int,
+    repo: CheckInRepository = Depends(get_checkin_repository),
+    current_user: User = Depends(get_current_user),
 ):
     """Get the latest check-in for a specific user."""
+    # Only allow users to view their own latest check-in
+    if user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have permission to view other users' latest check-in",
+        )
+
     checkin = await repo.get_latest_by_user(user_id)
     if not checkin:
         raise HTTPException(

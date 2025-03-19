@@ -4,7 +4,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=mysql+aiomysql://rollcall_user:rollcall_password@db:3306/rollcall
+      - DATABASE_URL=mysql+aiomysql://rollcall:BV3&G^Z9Zbt@db:3306/rollcall
       - DATABASE_NAME=rollcall
       - SECRET_KEY=your_secret_key_here_change_in_production
       - DEBUG=False
@@ -20,9 +20,9 @@ services:
       - "3306:3306"
     environment:
       - MYSQL_DATABASE=rollcall
-      - MYSQL_USER=rollcall_user
-      - MYSQL_PASSWORD=rollcall_password
-      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_USER=rollcall
+      - MYSQL_PASSWORD=BV3&G^Z9Zbt
+      - MYSQL_ROOT_PASSWORD=Sw8@QP8BcXZ
     volumes:
       - mysql_data:/var/lib/mysql
     restart: always

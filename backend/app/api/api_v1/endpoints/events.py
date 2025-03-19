@@ -36,18 +36,18 @@ async def create_event(
     new_event = Event(
         **event.model_dump(),
         creator_id=current_user_id,
-        participants=[current_user_id]  # Creator is automatically a participant
+        participants=[current_user_id],  # Creator is automatically a participant
     )
-    
+
     created_event = await repo.create(new_event)
     return created_event
 
 
 @router.get("/", response_model=List[EventResponse])
 async def get_events(
-    skip: int = 0, 
-    limit: int = 100, 
-    repo: EventRepository = Depends(get_event_repository)
+    skip: int = 0,
+    limit: int = 100,
+    repo: EventRepository = Depends(get_event_repository),
 ):
     """Get all public events with pagination."""
     return await repo.get_public_events(skip=skip, limit=limit)
@@ -56,9 +56,9 @@ async def get_events(
 @router.get("/my", response_model=List[EventResponse])
 async def get_my_events(
     current_user_id: int,
-    skip: int = 0, 
-    limit: int = 100, 
-    repo: EventRepository = Depends(get_event_repository)
+    skip: int = 0,
+    limit: int = 100,
+    repo: EventRepository = Depends(get_event_repository),
 ):
     """Get all events created by the current user."""
     return await repo.get_by_creator(current_user_id, skip=skip, limit=limit)
@@ -67,9 +67,9 @@ async def get_my_events(
 @router.get("/participating", response_model=List[EventResponse])
 async def get_participating_events(
     current_user_id: int,
-    skip: int = 0, 
-    limit: int = 100, 
-    repo: EventRepository = Depends(get_event_repository)
+    skip: int = 0,
+    limit: int = 100,
+    repo: EventRepository = Depends(get_event_repository),
 ):
     """Get all events the current user is participating in."""
     return await repo.get_by_participant(current_user_id, skip=skip, limit=limit)
@@ -77,15 +77,14 @@ async def get_participating_events(
 
 @router.get("/{event_id}", response_model=EventResponse)
 async def get_event(
-    event_id: int, 
-    repo: EventRepository = Depends(get_event_repository)
+    event_id: int, repo: EventRepository = Depends(get_event_repository)
 ):
     """Get a specific event by ID."""
     event = await repo.get_by_id(event_id)
     if not event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Event with ID {event_id} not found"
+            detail=f"Event with ID {event_id} not found",
         )
     return event
 
@@ -103,17 +102,19 @@ async def update_event(
     if not event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Event with ID {event_id} not found"
+            detail=f"Event with ID {event_id} not found",
         )
-    
+
     if event.creator_id != current_user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the creator can update this event"
+            detail="Only the creator can update this event",
         )
-    
+
     try:
-        updated_event = await repo.update(event_id, event_update.model_dump(exclude_unset=True))
+        updated_event = await repo.update(
+            event_id, event_update.model_dump(exclude_unset=True)
+        )
         return updated_event
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
@@ -121,9 +122,9 @@ async def update_event(
 
 @router.delete("/{event_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_event(
-    event_id: int, 
+    event_id: int,
     current_user_id: int,
-    repo: EventRepository = Depends(get_event_repository)
+    repo: EventRepository = Depends(get_event_repository),
 ):
     """Delete an event."""
     # Check if user is the creator of the event
@@ -131,20 +132,20 @@ async def delete_event(
     if not event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Event with ID {event_id} not found"
+            detail=f"Event with ID {event_id} not found",
         )
-    
+
     if event.creator_id != current_user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the creator can delete this event"
+            detail="Only the creator can delete this event",
         )
-    
+
     deleted = await repo.delete(event_id)
     if not deleted:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Event with ID {event_id} not found"
+            detail=f"Event with ID {event_id} not found",
         )
     return None
 
@@ -175,15 +176,15 @@ async def leave_event(
     if not event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Event with ID {event_id} not found"
+            detail=f"Event with ID {event_id} not found",
         )
-    
+
     if event.creator_id == current_user_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="The creator cannot leave the event"
+            detail="The creator cannot leave the event",
         )
-    
+
     try:
         updated_event = await repo.remove_participant(event_id, current_user_id)
         return updated_event
@@ -220,23 +221,26 @@ async def invite_user(
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with ID {user_id} not found"
+            detail=f"User with ID {user_id} not found",
         )
-    
+
     # Check if current user is the creator or a participant
     event = await repo.get_by_id(event_id)
     if not event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Event with ID {event_id} not found"
+            detail=f"Event with ID {event_id} not found",
         )
-    
-    if event.creator_id != current_user_id and current_user_id not in event.participants:
+
+    if (
+        event.creator_id != current_user_id
+        and current_user_id not in event.participants
+    ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the creator or participants can invite users"
+            detail="Only the creator or participants can invite users",
         )
-    
+
     try:
         updated_event = await repo.add_invited_user(event_id, user_id)
         return updated_event

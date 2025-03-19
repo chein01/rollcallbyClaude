@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "Roll Call by AI"
     API_V1_STR: str = "/api/v1"
     DEBUG: bool = Field(default=False)
+    FRONTEND_URL: str = Field(default="http://localhost:3000")
     
     # Security
     SECRET_KEY: str = Field(..., env="SECRET_KEY")
@@ -24,7 +25,16 @@ class Settings(BaseSettings):
     DATABASE_NAME: str = Field(default="rollcall", env="DATABASE_NAME")
     
     # CORS
-    CORS_ORIGINS: list[str] = ["*"]
+    CORS_ORIGINS: list[str] = ["http://localhost:3000"]
+    
+    # Email
+    MAIL_USERNAME: Optional[str] = Field(default=None, env="MAIL_USERNAME")
+    MAIL_PASSWORD: Optional[str] = Field(default=None, env="MAIL_PASSWORD")
+    MAIL_FROM: Optional[str] = Field(default=None, env="MAIL_FROM")
+    MAIL_PORT: int = Field(default=587, env="MAIL_PORT")
+    MAIL_SERVER: Optional[str] = Field(default=None, env="MAIL_SERVER")
+    MAIL_STARTTLS: bool = Field(default=True, env="MAIL_STARTTLS")
+    MAIL_SSL_TLS: bool = Field(default=False, env="MAIL_SSL_TLS")
     
     model_config = {
         "env_file": ".env",

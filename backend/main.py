@@ -21,6 +21,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+
 )
 
 # Database connection is handled by SQLAlchemy in app/db/database.py

@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: 9c224b20ee06
+Revision ID: 530c576b78bc
 Revises: 
-Create Date: 2025-03-11 14:00:40.778385
+Create Date: 2025-03-18 16:38:21.418834
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '9c224b20ee06'
+revision: str = '530c576b78bc'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -31,17 +31,20 @@ def upgrade() -> None:
     sa.Column('profile_image', sa.String(length=255), nullable=True),
     sa.Column('bio', sa.String(length=500), nullable=True),
     sa.Column('last_login', sa.DateTime(), nullable=True),
+    sa.Column('reset_token', sa.String(length=100), nullable=True),
+    sa.Column('reset_token_expires_at', sa.DateTime(), nullable=True),
     sa.Column('total_checkins', sa.Integer(), nullable=False),
     sa.Column('longest_streak', sa.Integer(), nullable=False),
     sa.Column('current_streak', sa.Integer(), nullable=False),
     sa.Column('achievements', sa.JSON(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
     op.create_index(op.f('ix_user_id'), 'user', ['id'], unique=False)
+    op.create_index(op.f('ix_user_reset_token'), 'user', ['reset_token'], unique=True)
     op.create_index(op.f('ix_user_username'), 'user', ['username'], unique=True)
     op.create_table('event',
     sa.Column('title', sa.String(length=100), nullable=False),
@@ -54,8 +57,8 @@ def upgrade() -> None:
     sa.Column('avg_streak', sa.Integer(), nullable=False),
     sa.Column('highest_streak', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
     sa.ForeignKeyConstraint(['creator_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -68,8 +71,8 @@ def upgrade() -> None:
     sa.Column('mood', sa.String(length=50), nullable=True),
     sa.Column('streak_count', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
     sa.ForeignKeyConstraint(['event_id'], ['event.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -103,8 +106,8 @@ def upgrade() -> None:
     sa.Column('is_used', sa.Boolean(), nullable=False),
     sa.Column('expiry_date', sa.DateTime(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
     sa.ForeignKeyConstraint(['event_id'], ['event.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -126,6 +129,7 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_event_id'), table_name='event')
     op.drop_table('event')
     op.drop_index(op.f('ix_user_username'), table_name='user')
+    op.drop_index(op.f('ix_user_reset_token'), table_name='user')
     op.drop_index(op.f('ix_user_id'), table_name='user')
     op.drop_index(op.f('ix_user_email'), table_name='user')
     op.drop_table('user')

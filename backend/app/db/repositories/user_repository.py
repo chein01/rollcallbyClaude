@@ -1,6 +1,7 @@
 from typing import List, Optional, Dict, Any
 from sqlalchemy import select, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import datetime, timedelta
 
 from app.db.models.user import User, UserCreate, UserUpdate
 from app.core.exceptions import NotFoundException
@@ -151,4 +152,85 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
             await self.db.commit()
             await self.db.refresh(user)
 
+        return user
+
+    async def get_by_reset_token(self, reset_token: str) -> Optional[User]:
+        """Get user by reset token.
+
+        Args:
+            reset_token: Reset token
+
+        Returns:
+            User if found and token is valid, None otherwise
+        """
+        current_timestamp = int(datetime.utcnow().timestamp())
+        result = await self.db.execute(
+            select(User).where(
+                User.reset_token == reset_token,
+                User.reset_token_expires_at > current_timestamp,
+            )
+        )
+        return result.scalar_one_or_none()
+
+    async def create(self, user: User) -> User:
+        """Create a new user.
+
+        Args:
+            user: User to create
+
+        Returns:
+            Created user
+        """
+        current_timestamp = int(datetime.utcnow().timestamp())
+        user.created_at = current_timestamp
+        user.updated_at = current_timestamp
+        self.db.add(user)
+        await self.db.commit()
+        await self.db.refresh(user)
+        return user
+
+    async def update_password(
+        self, user_id: int, hashed_password: str
+    ) -> Optional[User]:
+        user = await self.get_by_id(user_id)
+        if user:
+            user.hashed_password = hashed_password
+            await self.db.commit()
+        return user
+
+    async def update_reset_token(
+        self, user_id: int, reset_token: str, expires_delta: timedelta
+    ) -> Optional[User]:
+        user = await self.get_by_id(user_id)
+        if user:
+            user.reset_token = reset_token
+            user.reset_token_expires_at = int(
+                (datetime.utcnow() + expires_delta).timestamp()
+            )
+            await self.db.commit()
+        return user
+
+    async def update(self, user_id: int, user_update: UserUpdate) -> Optional[User]:
+        """Update a user.
+
+        Args:
+            user_id: User ID
+            user_update: User update data
+
+        Returns:
+            Updated user if found, None otherwise
+        """
+        user = await self.get_by_id(user_id)
+        if not user:
+            return None
+
+        # Update fields
+        for field, value in user_update.dict(exclude_unset=True).items():
+            setattr(user, field, value)
+
+        # Update timestamp
+        user.updated_at = int(datetime.utcnow().timestamp())
+
+        await self.db.commit()
+        await self.db.refresh(user)
         return user
