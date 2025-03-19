@@ -40,11 +40,11 @@ class CheckInResponse(BaseModel):
     id: int
     user_id: int
     event_id: int
-    check_date: datetime
+    check_date: int  # Unix timestamp
     note: Optional[str] = None
     mood: Optional[str] = None
     streak_count: int
-    created_at: datetime
+    created_at: int  # Unix timestamp
 
     model_config = {
         "json_schema_extra": {
@@ -52,11 +52,11 @@ class CheckInResponse(BaseModel):
                 "id": 1,
                 "user_id": 1,
                 "event_id": 1,
-                "check_date": "2023-01-01T10:30:00",
+                "check_date": 1672531200,  # Unix timestamp for 2023-01-01T10:30:00
                 "note": "Completed 45 minutes of coding today!",
                 "mood": "productive",
                 "streak_count": 7,
-                "created_at": "2023-01-01T10:30:00",
+                "created_at": 1672531200,  # Unix timestamp for 2023-01-01T10:30:00
             }
         }
     }
@@ -69,7 +69,7 @@ class UserEventStreak(BaseModel):
     event_id: int
     current_streak: int
     longest_streak: int
-    last_check_date: datetime
+    last_check_date: int  # Unix timestamp
 
     model_config = {
         "json_schema_extra": {
@@ -78,7 +78,7 @@ class UserEventStreak(BaseModel):
                 "event_id": "60d5e1c7a0f5a5a5a5a5a5a7",
                 "current_streak": 7,
                 "longest_streak": 30,
-                "last_check_date": "2023-01-01T10:30:00",
+                "last_check_date": 1672531200,  # Unix timestamp for 2023-01-01T10:30:00
             }
         }
     }

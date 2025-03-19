@@ -181,9 +181,7 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         Returns:
             Created user
         """
-        current_timestamp = int(datetime.utcnow().timestamp())
-        user.created_at = current_timestamp
-        user.updated_at = current_timestamp
+        # Let the database handle created_at and updated_at with CURRENT_TIMESTAMP
         self.db.add(user)
         await self.db.commit()
         await self.db.refresh(user)
@@ -228,9 +226,7 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         for field, value in user_update.dict(exclude_unset=True).items():
             setattr(user, field, value)
 
-        # Update timestamp
-        user.updated_at = int(datetime.utcnow().timestamp())
-
+        # Let the database handle updated_at with CURRENT_TIMESTAMP
         await self.db.commit()
         await self.db.refresh(user)
         return user

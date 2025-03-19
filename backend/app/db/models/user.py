@@ -22,7 +22,7 @@ class User(BaseDBModel):
     profile_image = Column(String(255), nullable=True)
     bio = Column(String(500), nullable=True)
     last_login = Column(DateTime, nullable=True)
-    
+
     # Password reset fields
     reset_token = Column(String(100), nullable=True, unique=True, index=True)
     reset_token_expires_at = Column(DateTime, nullable=True)
@@ -78,7 +78,7 @@ class UserResponse(BaseModel):
     longest_streak: int
     current_streak: int
     achievements: List[str]
-    created_at: datetime
+    created_at: int  # Unix timestamp
 
     model_config = {
         "json_schema_extra": {
@@ -93,7 +93,7 @@ class UserResponse(BaseModel):
                 "longest_streak": 30,
                 "current_streak": 15,
                 "achievements": ["7_day_streak", "first_event_created"],
-                "created_at": "2023-01-01T00:00:00",
+                "created_at": 1672531200,  # Unix timestamp for 2023-01-01T00:00:00
             }
         }
     }

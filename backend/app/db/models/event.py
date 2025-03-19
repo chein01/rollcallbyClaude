@@ -9,25 +9,26 @@ from app.db.models.base import BaseDBModel, BasePydanticModel
 
 # Association tables for many-to-many relationships
 event_participants = Table(
-    'event_participants',
+    "event_participants",
     BaseDBModel.metadata,
-    Column('event_id', Integer, ForeignKey('event.id'), primary_key=True),
-    Column('user_id', Integer, ForeignKey('user.id'), primary_key=True)
+    Column("event_id", Integer, ForeignKey("event.id"), primary_key=True),
+    Column("user_id", Integer, ForeignKey("user.id"), primary_key=True),
 )
 
 event_invited_users = Table(
-    'event_invited_users',
+    "event_invited_users",
     BaseDBModel.metadata,
-    Column('event_id', Integer, ForeignKey('event.id'), primary_key=True),
-    Column('user_id', Integer, ForeignKey('user.id'), primary_key=True)
+    Column("event_id", Integer, ForeignKey("event.id"), primary_key=True),
+    Column("user_id", Integer, ForeignKey("user.id"), primary_key=True),
 )
 
 event_streak_leaders = Table(
-    'event_streak_leaders',
+    "event_streak_leaders",
     BaseDBModel.metadata,
-    Column('event_id', Integer, ForeignKey('event.id'), primary_key=True),
-    Column('user_id', Integer, ForeignKey('user.id'), primary_key=True)
+    Column("event_id", Integer, ForeignKey("event.id"), primary_key=True),
+    Column("user_id", Integer, ForeignKey("user.id"), primary_key=True),
 )
+
 
 class Event(BaseDBModel):
     """Event model for tracking daily check-ins.
@@ -40,17 +41,33 @@ class Event(BaseDBModel):
     creator_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     category = Column(String(50), nullable=True)
     icon = Column(String(255), nullable=True)  # Icon identifier or URL
-    is_public = Column(Boolean, default=False, nullable=False)  # Whether the event is visible to other users
-    total_checkins = Column(Integer, default=0, nullable=False)  # Total number of check-ins across all participants
-    avg_streak = Column(Integer, default=0, nullable=False)  # Average streak across all participants
-    highest_streak = Column(Integer, default=0, nullable=False)  # Highest streak achieved in this event
-    
+    is_public = Column(
+        Boolean, default=False, nullable=False
+    )  # Whether the event is visible to other users
+    total_checkins = Column(
+        Integer, default=0, nullable=False
+    )  # Total number of check-ins across all participants
+    avg_streak = Column(
+        Integer, default=0, nullable=False
+    )  # Average streak across all participants
+    highest_streak = Column(
+        Integer, default=0, nullable=False
+    )  # Highest streak achieved in this event
+
     # Relationships
-    creator = relationship("User", back_populates="created_events", foreign_keys=[creator_id])
-    participants = relationship("User", secondary=event_participants, back_populates="participating_events")
-    invited_users = relationship("User", secondary=event_invited_users, back_populates="event_invitations")
+    creator = relationship(
+        "User", back_populates="created_events", foreign_keys=[creator_id]
+    )
+    participants = relationship(
+        "User", secondary=event_participants, back_populates="participating_events"
+    )
+    invited_users = relationship(
+        "User", secondary=event_invited_users, back_populates="event_invitations"
+    )
     streak_leaders = relationship("User", secondary=event_streak_leaders)
-    checkins = relationship("CheckIn", back_populates="event", cascade="all, delete-orphan")
+    checkins = relationship(
+        "CheckIn", back_populates="event", cascade="all, delete-orphan"
+    )
 
 
 class EventCreate(BaseModel):
@@ -89,7 +106,7 @@ class EventResponse(BaseModel):
     avg_streak: int = 0
     highest_streak: int = 0
     streak_leaders: List[int] = Field(default_factory=list)
-    created_at: datetime
+    created_at: int  # Unix timestamp
 
     model_config = {
         "json_schema_extra": {
@@ -116,7 +133,7 @@ class EventResponse(BaseModel):
                     1,
                     2,
                 ],
-                "created_at": "2023-01-01T00:00:00",
+                "created_at": 1672531200,  # Unix timestamp for 2023-01-01T00:00:00
             }
         }
     }
