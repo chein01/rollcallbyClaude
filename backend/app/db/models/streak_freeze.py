@@ -2,10 +2,10 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, Field
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, BigInteger, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 
-from app.db.models.base import BaseDBModel, BasePydanticModel
+from app.db.models.base import BaseDBModel, TimestampModel
 
 
 class StreakFreeze(BaseDBModel):
@@ -16,17 +16,17 @@ class StreakFreeze(BaseDBModel):
 
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     event_id = Column(Integer, ForeignKey("event.id"), nullable=False)
-    used_date = Column(DateTime, nullable=True)  # When the freeze was applied
+    used_date = Column(BigInteger, nullable=True)  # When the freeze was applied
     is_used = Column(
         Boolean, default=False, nullable=False
     )  # Whether the freeze has been used
     expiry_date = Column(
-        DateTime, nullable=True
+        BigInteger, nullable=True
     )  # Optional expiration date for the freeze
 
     # Relationships
-    user = relationship("User", backref="streak_freezes")
-    event = relationship("Event", backref="streak_freezes")
+    user = relationship("User", back_populates="streak_freezes")
+    event = relationship("Event", back_populates="streak_freezes")
 
 
 class StreakFreezeCreate(BaseModel):
@@ -43,7 +43,7 @@ class StreakFreezeUpdate(BaseModel):
     used_date: Optional[datetime] = None
 
 
-class StreakFreezeResponse(BaseModel):
+class StreakFreezeResponse(TimestampModel):
     """Schema for streak freeze information in API responses."""
 
     id: str

@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, Field
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, BigInteger, ForeignKey
 from sqlalchemy.orm import relationship
 
-from app.db.models.base import BaseDBModel
+from app.db.models.base import BaseDBModel, TimestampModel
 
 
 class CheckIn(BaseDBModel):
@@ -14,7 +14,9 @@ class CheckIn(BaseDBModel):
 
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     event_id = Column(Integer, ForeignKey("event.id"), nullable=False)
-    check_date = Column(DateTime, default=datetime.utcnow, nullable=False)
+    check_date = Column(
+        BigInteger, default=lambda: int(datetime.utcnow().timestamp()), nullable=False
+    )
     note = Column(String(500), nullable=True)  # Optional note for the check-in
     mood = Column(String(50), nullable=True)  # Optional mood indicator
     streak_count = Column(
@@ -34,7 +36,7 @@ class CheckInCreate(BaseModel):
     mood: Optional[str] = Field(None, max_length=50)
 
 
-class CheckInResponse(BaseModel):
+class CheckInResponse(TimestampModel):
     """Schema for check-in information in API responses."""
 
     id: int

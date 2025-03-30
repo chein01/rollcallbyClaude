@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean, Table
+from sqlalchemy import Column, Integer, String, BigInteger, ForeignKey, Boolean, Table
 from sqlalchemy.orm import relationship
 
-from app.db.models.base import BaseDBModel, BasePydanticModel
+from app.db.models.base import BaseDBModel, TimestampModel
 
 
 # Association tables for many-to-many relationships
@@ -68,6 +68,9 @@ class Event(BaseDBModel):
     checkins = relationship(
         "CheckIn", back_populates="event", cascade="all, delete-orphan"
     )
+    streak_freezes = relationship(
+        "StreakFreeze", back_populates="event", cascade="all, delete-orphan"
+    )
 
 
 class EventCreate(BaseModel):
@@ -90,7 +93,7 @@ class EventUpdate(BaseModel):
     is_public: Optional[bool] = None
 
 
-class EventResponse(BaseModel):
+class EventResponse(TimestampModel):
     """Schema for event information in API responses."""
 
     id: int
