@@ -1,0 +1,79 @@
+.mini-calendar {
+  @apply bg-card text-card-foreground rounded-lg border shadow-sm p-4;
+}
+
+.calendar-header {
+  @apply mb-4;
+}
+
+.calendar-title {
+  @apply text-lg font-semibold text-foreground;
+}
+
+.calendar-date {
+  @apply text-sm text-muted-foreground;
+}
+
+.calendar-grid {
+  @apply grid grid-cols-7 gap-1;
+}
+
+.calendar-day {
+  @apply p-2 rounded-md text-center transition-colors;
+}
+
+.calendar-day.today {
+  @apply bg-primary/10;
+}
+
+.calendar-day.has-events {
+  @apply cursor-pointer hover:bg-muted/50;
+}
+
+.calendar-day.needs-checkin {
+  @apply bg-yellow-500/10;
+}
+
+.day-header {
+  @apply flex flex-col items-center gap-0.5;
+}
+
+.day-name {
+  @apply text-xs text-muted-foreground font-medium;
+}
+
+.day-number {
+  @apply text-sm text-foreground;
+}
+
+.today .day-number {
+  @apply font-bold text-primary;
+}
+
+.event-dots {
+  @apply flex flex-wrap justify-center gap-1 mt-1;
+}
+
+.event-dot {
+  @apply w-1.5 h-1.5 rounded-full bg-primary/60;
+}
+
+.event-dot.needs-checkin {
+  @apply bg-yellow-500;
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+} 

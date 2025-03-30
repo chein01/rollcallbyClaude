@@ -2,43 +2,112 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 255, 255, 255;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 75.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-start-rgb));
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-foreground font-semibold;
+  }
+  
+  p {
+    @apply text-foreground;
+  }
+  
+  .text-muted {
+    @apply text-muted-foreground font-medium;
+  }
+  
+  a:hover, button:hover {
+    @apply text-foreground transition-colors;
+  }
+  
+  html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .text-foreground\/60 {
+    @apply text-foreground/70 hover:text-foreground/90;
+  }
 }
 
 @layer components {
   .input-field {
-    @apply w-full px-4 py-3 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ease-in-out bg-gray-50/50 backdrop-blur-xl;
+    @apply w-full px-4 py-3 rounded-2xl border border-input
+    focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent 
+    transition-all duration-200 ease-in-out
+    bg-background text-foreground placeholder:text-muted-foreground;
   }
 
   .auth-button {
-    @apply w-full px-4 py-3 rounded-2xl font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 active:from-blue-700 active:to-blue-800 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply w-full px-4 py-3 rounded-2xl font-medium text-primary-foreground 
+    bg-primary hover:bg-primary/90
+    transition-all duration-200 ease-in-out 
+    shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .auth-card {
-    @apply w-full max-w-md mx-auto p-8 rounded-3xl bg-white/80 backdrop-blur-xl shadow-xl border border-gray-100;
+    @apply w-full max-w-md mx-auto p-8 rounded-3xl 
+    bg-card text-card-foreground
+    shadow-xl border;
   }
 
   .auth-title {
-    @apply text-3xl font-bold text-gray-900 mb-2 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600;
+    @apply text-3xl font-bold mb-2 text-foreground;
   }
 
   .auth-subtitle {
-    @apply text-base text-gray-500 mb-8;
+    @apply text-base text-muted-foreground mb-8;
   }
 }

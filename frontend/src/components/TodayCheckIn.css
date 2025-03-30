@@ -1,0 +1,51 @@
+.today-checkin-container {
+  @apply bg-card text-card-foreground rounded-lg border shadow-sm p-6 mb-8;
+}
+
+.today-checkin-header {
+  @apply flex justify-between items-center mb-6;
+}
+
+.today-checkin-title {
+  @apply text-xl font-semibold text-foreground flex items-center gap-2;
+}
+
+.today-checkin-events {
+  @apply space-y-4;
+}
+
+.today-checkin-event {
+  @apply flex items-center gap-4 p-4 bg-muted/50 rounded-lg hover:bg-muted/70 transition-colors;
+}
+
+.event-time {
+  @apply flex items-center gap-2 text-sm text-muted-foreground min-w-[80px];
+}
+
+.event-info {
+  @apply flex-1;
+}
+
+.event-title {
+  @apply text-base font-medium text-foreground;
+}
+
+.event-location {
+  @apply text-sm text-muted-foreground;
+}
+
+.event-countdown {
+  @apply flex flex-col items-end gap-2 min-w-[120px];
+}
+
+.countdown-badge {
+  @apply text-sm font-medium text-orange-600 dark:text-orange-400;
+}
+
+.pending-badge {
+  @apply text-xs bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 px-2 py-1 rounded-full;
+}
+
+.checkin-button {
+  @apply px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors text-sm font-medium min-w-[120px] text-center;
+} 

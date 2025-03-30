@@ -1,0 +1,84 @@
+.checkin-banner {
+  @apply fixed top-0 left-0 right-0 bg-yellow-500 text-white z-50;
+  animation: slide-down 0.3s ease-out;
+}
+
+.banner-content {
+  @apply container mx-auto px-4 py-3 flex items-center gap-3 justify-between max-w-7xl;
+}
+
+.banner-icon {
+  @apply h-5 w-5 flex-shrink-0;
+}
+
+.banner-text {
+  @apply flex-1 text-sm flex items-center gap-2;
+}
+
+.banner-event-name {
+  @apply text-yellow-100;
+}
+
+.banner-action {
+  @apply px-4 py-1.5 bg-white text-yellow-500 rounded-full text-sm font-medium 
+    hover:bg-yellow-50 transition-colors whitespace-nowrap;
+}
+
+.banner-close {
+  @apply absolute right-4 top-1/2 -translate-y-1/2 text-white/80 
+    hover:text-white transition-colors;
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.checkin-notification {
+  @apply bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4
+    flex items-center justify-between gap-3 animate-fade-in;
+}
+
+.notification-content {
+  @apply flex items-center gap-3 flex-1 min-w-0;
+}
+
+.notification-icon {
+  @apply h-4 w-4 text-yellow-500 flex-shrink-0;
+}
+
+.notification-text {
+  @apply text-sm text-yellow-800 flex-1 truncate;
+}
+
+.event-name {
+  @apply font-medium text-yellow-900;
+}
+
+.notification-action {
+  @apply px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium 
+    hover:bg-yellow-200 transition-colors whitespace-nowrap flex-shrink-0;
+}
+
+.notification-close {
+  @apply text-yellow-600 hover:text-yellow-800 transition-colors flex-shrink-0;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+} 

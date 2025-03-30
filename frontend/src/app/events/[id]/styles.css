@@ -1,0 +1,216 @@
+.event-detail-container {
+  @apply min-h-screen bg-background p-6;
+}
+
+.event-detail-back {
+  @apply max-w-7xl mx-auto mb-6;
+}
+
+.back-button {
+  @apply flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors;
+}
+
+.event-detail-layout {
+  @apply max-w-7xl mx-auto grid gap-8;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1024px) {
+  .event-detail-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+  }
+}
+
+/* Left column - Image */
+.event-detail-image-container {
+  @apply flex flex-col gap-6 sticky top-20 self-start;
+  max-height: calc(100vh - 8rem);
+}
+
+.event-image-wrapper {
+  @apply relative rounded-xl overflow-hidden border border-border aspect-[4/3] shadow-md;
+  height: auto;
+  max-height: 500px;
+}
+
+.event-detail-image {
+  object-fit: cover;
+}
+
+.event-image-overlay {
+  @apply absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6;
+}
+
+.event-category-badge {
+  @apply bg-primary/90 text-primary-foreground px-4 py-1.5 rounded-full text-sm font-medium;
+}
+
+.event-actions-card {
+  @apply bg-card text-card-foreground p-6 rounded-xl border border-border shadow-sm flex justify-between items-center;
+}
+
+.event-date-badge {
+  @apply flex items-center gap-3 bg-muted/50 p-4 rounded-lg text-foreground;
+  min-width: 100px;
+}
+
+.date-badge-day {
+  @apply text-3xl font-bold;
+}
+
+.date-badge-month {
+  @apply text-sm text-muted-foreground;
+}
+
+.event-action-buttons {
+  @apply flex gap-6;
+}
+
+.action-button {
+  @apply flex flex-col items-center justify-center gap-1 p-3 rounded-lg transition-colors text-muted-foreground;
+}
+
+.action-button.star {
+  @apply hover:text-yellow-500;
+}
+
+.action-button.star[disabled] {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.action-button.share {
+  @apply hover:text-blue-500;
+}
+
+.action-button.favorite {
+  @apply hover:text-red-500;
+}
+
+/* Right column - Event info */
+.event-detail-info-container {
+  @apply flex flex-col gap-8;
+}
+
+.event-detail-header-card {
+  @apply bg-card text-card-foreground p-8 rounded-xl border border-border shadow-sm;
+}
+
+.event-detail-title {
+  @apply text-3xl font-bold text-foreground mb-4;
+}
+
+.event-organizer {
+  @apply mb-6 flex flex-col;
+}
+
+.organizer-label {
+  @apply text-sm text-muted-foreground;
+}
+
+.organizer-name {
+  @apply text-foreground font-medium text-lg;
+}
+
+.event-meta-info {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-b border-border py-6 mb-6;
+}
+
+.meta-item {
+  @apply flex items-start gap-3 p-2;
+}
+
+.meta-label {
+  @apply text-sm text-muted-foreground;
+}
+
+.meta-value {
+  @apply text-foreground font-medium;
+}
+
+.status-badge {
+  @apply px-3 py-1 rounded-full text-sm font-medium w-fit;
+}
+
+.status-badge.ongoing {
+  @apply bg-green-500/20 text-green-500 font-medium;
+}
+
+.status-badge.ended {
+  @apply bg-red-500/20 text-red-500 font-medium;
+}
+
+.join-event-container {
+  @apply flex flex-col items-center;
+}
+
+.join-event-button {
+  @apply w-full py-3 px-8 rounded-lg font-medium text-base mb-3 transition-colors bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-80 disabled:cursor-not-allowed;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.join-event-button.joined {
+  @apply bg-green-600 hover:bg-green-700 text-white font-semibold;
+  box-shadow: 0 2px 10px rgba(0, 128, 0, 0.2);
+}
+
+.join-event-button.ended {
+  @apply bg-gray-500 hover:bg-gray-600 text-white;
+}
+
+.join-text {
+  @apply text-center text-sm text-muted-foreground mt-2;
+}
+
+.event-detail-description-card {
+  @apply bg-card text-card-foreground p-8 rounded-xl border border-border shadow-sm;
+}
+
+.section-title {
+  @apply text-xl font-semibold text-foreground mb-6 after:content-[''] after:block after:w-16 after:h-1 after:bg-primary after:mt-2;
+}
+
+.description-content {
+  @apply text-muted-foreground whitespace-pre-wrap leading-relaxed;
+  max-width: 65ch;
+}
+
+/* Loading and error states */
+.event-detail-loading,
+.event-detail-error {
+  @apply flex flex-col items-center justify-center min-h-[50vh] text-muted-foreground;
+}
+
+.loading-spinner {
+  @apply w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4;
+}
+
+.event-placeholder-image {
+  @apply w-full h-full flex items-center justify-center;
+  background-size: cover;
+  background-position: center;
+}
+
+.placeholder-title {
+  @apply text-white text-2xl font-bold px-8 text-center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.event-placeholder-image.technology {
+  background: linear-gradient(135deg, #4a00e0, #8e2de2);
+}
+
+.event-placeholder-image.education {
+  background: linear-gradient(135deg, #2193b0, #6dd5ed);
+}
+
+.event-placeholder-image.healthcare {
+  background: linear-gradient(135deg, #00b09b, #96c93d);
+}
+
+.event-placeholder-image.design {
+  background: linear-gradient(135deg, #ff5f6d, #ffc371);
+}
+
+.event-placeholder-image.security {
+  background: linear-gradient(135deg, #334d50, #cbcaa5);
+} 

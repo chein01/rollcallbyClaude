@@ -2,40 +2,48 @@
 
 import Link from 'next/link';
 import { useAppSelector } from '@/store';
-import { useRouter } from 'next/navigation';
+import { ThemeToggle } from './ThemeToggle';
+import { Logo } from './Logo';
 
 export default function Header() {
-  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
-  const router = useRouter();
+  const { user } = useAppSelector((state) => state.auth);
 
   return (
-    <header className="bg-white shadow-sm py-4">
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link href="/dashboard" className="text-xl font-bold text-blue-600 hover:text-blue-800 transition-colors">
-          RollCallByCusor
-        </Link>
-        
-        <div>
-          {isAuthenticated && user ? (
-            <div className="relative group">
-              <button 
-                onClick={() => router.push('/user/profile')} 
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 max-w-screen-2xl items-center">
+        <div className="mr-4 flex">
+          <Link href="/" className="mr-6 flex items-center space-x-2">
+            <Logo />
+          </Link>
+        </div>
+
+        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+          <nav className="flex items-center space-x-6">
+            {user && (
+              <>
+                <Link href="/events" className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground">
+                  Events
+                </Link>
+                <Link href="/checkin" className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground">
+                  Today Check-in
+                </Link>
+                <Link href="/user/profile" className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground">
+                  Profile
+                </Link>
+              </>
+            )}
+          </nav>
+          <div className="flex items-center space-x-4">
+            <ThemeToggle />
+            {!user && (
+              <Link 
+                href="/auth/login"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4"
               >
-                <span>{user.name}</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
-          ) : (
-            <Link 
-              href="/auth/login" 
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-            >
-              Login
-            </Link>
-          )}
+                Login
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </header>

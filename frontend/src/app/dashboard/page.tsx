@@ -5,7 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/store';
 import Link from 'next/link';
 import { LeaderboardEntry } from '@/components/LeaderboardEntry';
+import { EventCard } from '@/components/EventCard';
 import './styles.css';
+import { Calendar, User, Settings, Star, MapPin, Users, LineChart, Award } from 'lucide-react';
+import { Event, EventStatus } from '@/types/event';
+import { EventGroup } from '@/components/EventGroup';
+import { MiniCalendar } from '@/components/MiniCalendar';
+import { CheckInBanner } from '@/components/CheckInBanner';
 
 // Sample data for demonstration
 const sampleUsers = [
@@ -17,52 +23,46 @@ const sampleUsers = [
 ];
 
 // Sample event data for demonstration
-const sampleEvents = [
+const sampleEvents: Event[] = [
   { 
     id: '1', 
-    name: 'Annual Tech Conference', 
+    title: 'Annual Tech Conference',
     description: 'Join us for the biggest tech event of the year with industry leaders and innovators.',
-    date: '2023-12-15',
+    startDate: new Date(new Date().setHours(9, 0, 0, 0)).toISOString(), // Set to 9:00 AM today
+    endDate: new Date(new Date().setHours(17, 0, 0, 0)).toISOString(), // Set to 5:00 PM today
     location: 'San Francisco, CA',
     participants: 120,
-    isJoined: true
+    stars: 45,
+    status: 'ongoing' as EventStatus,
+    hasJoined: true,
+    isCheckedIn: false
   },
   { 
     id: '2', 
-    name: 'Web Development Workshop', 
+    title: 'Web Development Workshop', 
     description: 'Learn the latest web development techniques and tools in this hands-on workshop.',
-    date: '2023-11-20',
+    startDate: new Date(new Date().setHours(14, 0, 0, 0)).toISOString(), // Set to 2:00 PM today
+    endDate: new Date(new Date().setHours(17, 0, 0, 0)).toISOString(), // Set to 5:00 PM today
     location: 'Online',
     participants: 85,
-    isJoined: false
+    stars: 32,
+    status: 'ongoing' as EventStatus,
+    hasJoined: true,
+    isCheckedIn: false
   },
   { 
     id: '3', 
-    name: 'AI in Healthcare Symposium', 
+    title: 'AI in Healthcare Symposium', 
     description: 'Explore how artificial intelligence is transforming healthcare delivery and research.',
-    date: '2024-01-10',
+    startDate: new Date(new Date(Date.now() + 24 * 60 * 60 * 1000).setHours(10, 0, 0, 0)).toISOString(), // Tomorrow 10:00 AM
+    endDate: new Date(new Date(Date.now() + 24 * 60 * 60 * 1000).setHours(16, 0, 0, 0)).toISOString(), // Tomorrow 4:00 PM
     location: 'Boston, MA',
     participants: 95,
-    isJoined: true
-  },
-  { 
-    id: '4', 
-    name: 'Mobile App Design Masterclass', 
-    description: 'Master the art of creating beautiful and functional mobile app interfaces.',
-    date: '2023-12-05',
-    location: 'New York, NY',
-    participants: 60,
-    isJoined: false
-  },
-  { 
-    id: '5', 
-    name: 'Cybersecurity Summit', 
-    description: 'Stay ahead of threats with insights from top cybersecurity experts.',
-    date: '2024-02-20',
-    location: 'Washington, DC',
-    participants: 110,
-    isJoined: false
-  },
+    stars: 38,
+    status: 'ongoing' as EventStatus,
+    hasJoined: true,
+    isCheckedIn: false
+  }
 ];
 
 export default function DashboardPage() {
@@ -90,6 +90,16 @@ export default function DashboardPage() {
   
   // No longer blocking rendering when user is null
 
+  const handleCheckIn = async (eventId: string) => {
+    // Giả lập API call
+    const updatedEvents = sampleEvents.map(event => 
+      event.id === eventId 
+        ? { ...event, isCheckedIn: true }
+        : event
+    );
+    console.log('Checked in for event:', eventId);
+  };
+
   return (
     <main className="dashboard-container">
       <div className="dashboard-content">
@@ -97,47 +107,67 @@ export default function DashboardPage() {
         <div className="welcome-header">
           <h1 className="welcome-title">Welcome, {userName}!</h1>
           <p className="welcome-subtitle">Manage your attendance and events from your dashboard</p>
+          <CheckInBanner events={sampleEvents} />
         </div>
 
-        {/* Quick Actions */}
-        <div className="section-container">
-          <h2 className="section-title">Quick Actions</h2>
-          <div className="quick-actions-grid">
-            <Link href="/checkin/today" className="action-card checkin-card">
-              <h3 className="action-card-title">Today's Check-in</h3>
-              <p>Mark your attendance for today</p>
-            </Link>
-            <Link href="/events" className="action-card events-card">
-              <h3 className="action-card-title">Events</h3>
-              <p>View and manage your events</p>
-            </Link>
-            <Link href="/user/profile" className="action-card profile-card">
-              <h3 className="action-card-title">Profile</h3>
-              <p>Update your profile information</p>
-            </Link>
+        {/* Overview Grid */}
+        <div className="overview-grid">
+          <div className="overview-main">
+            {/* Quick Actions */}
+            <div className="section-container">
+              <h2 className="section-title">Quick Actions</h2>
+              <div className="quick-actions-grid">
+                <Link href="/analytics" className="action-card action-card-analytics">
+                  <div className="action-card-icon">
+                    <LineChart className="h-5 w-5" />
+                  </div>
+                  <h3 className="action-card-title">Analytics</h3>
+                  <p>Check your attendance stats</p>
+                </Link>
+                <Link href="/achievements" className="action-card action-card-streak">
+                  <div className="action-card-icon">
+                    <Award className="h-5 w-5" />
+                  </div>
+                  <h3 className="action-card-title">Achievements</h3>
+                  <p>View your badges and rewards</p>
+                </Link>
+                <Link href="/user/profile" className="action-card action-card-profile">
+                  <div className="action-card-icon">
+                    <User className="h-5 w-5" />
+                  </div>
+                  <h3 className="action-card-title">Profile</h3>
+                  <p>Update your information</p>
+                </Link>
+              </div>
+            </div>
+
+            {/* Stats Overview */}
+            <div className="section-container">
+              <h2 className="section-title">Your Stats</h2>
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <p className="stat-label">Current Streak</p>
+                  <p className="stat-value streak-value">0 days</p>
+                </div>
+                <div className="stat-card">
+                  <p className="stat-label">Longest Streak</p>
+                  <p className="stat-value longest-streak-value">0 days</p>
+                </div>
+                <div className="stat-card">
+                  <p className="stat-label">Total Check-ins</p>
+                  <p className="stat-value checkins-value">0</p>
+                </div>
+                <div className="stat-card">
+                  <p className="stat-label">Events Joined</p>
+                  <p className="stat-value events-value">0</p>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Stats Overview */}
-        <div className="section-container">
-          <h2 className="section-title">Your Stats</h2>
-          <div className="stats-grid">
-            <div className="stat-card">
-              <p className="stat-label">Current Streak</p>
-              <p className="stat-value streak-value">0 days</p>
-            </div>
-            <div className="stat-card">
-              <p className="stat-label">Longest Streak</p>
-              <p className="stat-value longest-streak-value">0 days</p>
-            </div>
-            <div className="stat-card">
-              <p className="stat-label">Total Check-ins</p>
-              <p className="stat-value checkins-value">0</p>
-            </div>
-            <div className="stat-card">
-              <p className="stat-label">Events Joined</p>
-              <p className="stat-value events-value">0</p>
-            </div>
+          <div className="overview-sidebar">
+            {/* Mini Calendar */}
+            <MiniCalendar events={sampleEvents} />
           </div>
         </div>
 
@@ -181,95 +211,15 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Popular Events Section */}
-        <div className="section-container">
-          <div className="leaderboard-header">
-            <h2 className="section-title">Popular Events</h2>
-            <Link href="/events" className="view-all-link">
-              View All Events
-            </Link>
-          </div>
-          <div className="events-preview-grid">
-            {sampleEvents
-              .sort((a, b) => b.participants - a.participants)
-              .slice(0, 3)
-              .map((event) => (
-                <div key={event.id} className="event-preview-card">
-                  <div className="event-preview-header">
-                    <h3 className="event-preview-title">{event.name}</h3>
-                    <span className="event-preview-date">
-                      {new Date(event.date).toLocaleDateString(undefined, { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}
-                    </span>
-                  </div>
-                  <p className="event-preview-description">{event.description}</p>
-                  <div className="event-preview-footer">
-                    <div className="event-preview-participants">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                      </svg>
-                      <span>{event.participants} participants</span>
-                    </div>
-                    <Link href={`/events/${event.id}`} className="event-preview-link">
-                      View Details
-                    </Link>
-                  </div>
-                </div>
-              ))}
-          </div>
-        </div>
-
-        {/* My Events Section */}
-        <div className="section-container">
-          <div className="leaderboard-header">
-            <h2 className="section-title">My Events</h2>
-            <Link href="/events" className="view-all-link">
-              View All Events
-            </Link>
-          </div>
-          <div className="events-preview-grid">
-            {sampleEvents
-              .filter(event => event.isJoined)
-              .slice(0, 3)
-              .map((event) => (
-                <div key={event.id} className="event-preview-card">
-                  <div className="event-preview-header">
-                    <h3 className="event-preview-title">{event.name}</h3>
-                    <span className="event-preview-date">
-                      {new Date(event.date).toLocaleDateString(undefined, { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}
-                    </span>
-                  </div>
-                  <p className="event-preview-description">{event.description}</p>
-                  <div className="event-preview-footer">
-                    <div className="event-preview-location">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                      </svg>
-                      <span>{event.location}</span>
-                    </div>
-                    <Link href={`/events/${event.id}`} className="event-preview-link">
-                      View Details
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            {sampleEvents.filter(event => event.isJoined).length === 0 && (
-              <div className="no-events-message">
-                <p>You haven't joined any events yet.</p>
-                <Link href="/events" className="browse-events-link">
-                  Browse Events
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
+        {/* Events Section */}
+        <EventGroup 
+          events={sampleEvents}
+          onStarClick={async (eventId) => {
+            // Handle star click
+            console.log('Star clicked for event:', eventId);
+          }}
+          onCheckIn={handleCheckIn}
+        />
       </div>
     </main>
   );

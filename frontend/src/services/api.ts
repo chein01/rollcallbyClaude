@@ -5,14 +5,6 @@ import { toast } from 'sonner';
 
 // Utility function for logging
 const logRequest = (type: 'request' | 'response' | 'error', data: any) => {
-  // Client-side logging
-  if (typeof window !== 'undefined') {
-    if (type === 'error') {
-      console.error(`❌ ${type.toUpperCase()}:`, data);
-    } else {
-      console.log(`${type === 'request' ? '🚀' : '✅'} ${type.toUpperCase()}:`, data);
-    }
-  }
 
   // Server-side logging
   if (typeof window === 'undefined') {

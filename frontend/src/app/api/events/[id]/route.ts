@@ -1,13 +1,8 @@
-'use client';
-
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAppSelector } from '@/store';
-import { EventCard } from '@/components/EventCard';
-import './styles.css';
+import { NextResponse } from 'next/server';
+import { Event } from '@/types/event';
 
 // Sample event data for demonstration
-const sampleEvents = [
+const sampleEvents: Event[] = [
   { 
     id: '1', 
     title: 'Annual Tech Conference', 
@@ -67,53 +62,39 @@ const sampleEvents = [
     stars: 42,
     status: 'ongoing',
     hasJoined: false
-  },
+  }
 ];
 
-export default function EventsPage() {
-  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
-  const router = useRouter();
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const event = sampleEvents.find(e => e.id === params.id);
 
-  // Authentication check temporarily disabled
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     router.push('/auth/login');
-  //   }
-  // }, [isAuthenticated, router]);
+  if (!event) {
+    return new NextResponse(null, { status: 404 });
+  }
 
-  // Format date to be more readable
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
-
-  return (
-    <main className="events-container">
-      <div className="events-content">
-        {/* Page Header */}
-        <div className="page-header">
-          <h1 className="page-title">Events</h1>
-          <p className="page-subtitle">Discover and join events to connect with others</p>
-        </div>
-
-        {/* Events List */}
-        <div className="events-grid">
-          {sampleEvents.map((event) => (
-            <EventCard 
-              key={event.id} 
-              event={event}
-              onStarClick={async (eventId) => {
-                // Handle star click
-                console.log('Star clicked for event:', eventId);
-              }}
-            />
-          ))}
-        </div>
-      </div>
-    </main>
-  );
+  return NextResponse.json(event);
 }
+
+export async function POST(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const event = sampleEvents.find(e => e.id === params.id);
+
+  if (!event) {
+    return new NextResponse(null, { status: 404 });
+  }
+
+  const { action } = await request.json();
+
+  if (action === 'join') {
+    event.hasJoined = true;
+  } else if (action === 'star') {
+    event.stars += 1;
+  }
+
+  return NextResponse.json(event);
+} 

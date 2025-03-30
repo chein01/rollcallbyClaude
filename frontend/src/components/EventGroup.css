@@ -1,0 +1,47 @@
+.event-groups {
+  @apply space-y-8;
+}
+
+.event-group {
+  @apply space-y-4;
+}
+
+.today-events {
+  @apply bg-card text-card-foreground rounded-lg border shadow-sm p-6;
+}
+
+.group-title {
+  @apply text-xl font-semibold text-foreground flex items-center gap-2;
+}
+
+.event-count {
+  @apply text-sm font-normal bg-primary/10 text-primary px-2 py-1 rounded-full;
+}
+
+.events-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.event-wrapper {
+  @apply relative;
+}
+
+.event-status {
+  @apply absolute top-2 right-2 z-10 flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.event-status.need-checkin {
+  @apply bg-yellow-500/10 text-yellow-600 dark:text-yellow-400;
+}
+
+.event-status.upcoming {
+  @apply bg-blue-500/10 text-blue-600 dark:text-blue-400;
+}
+
+.event-status.completed {
+  @apply bg-green-500/10 text-green-600 dark:text-green-400;
+}
+
+.event-status.checked-in {
+  @apply bg-green-500/10 text-green-600 dark:text-green-400;
+} 

@@ -1,20 +1,23 @@
 .profile-container {
   min-height: 100vh;
   padding: 1.5rem;
-  background-color: rgb(249, 250, 251);
+  @apply bg-background;
 }
 
 .profile-content {
-  max-width: 64rem;
+  max-width: 72rem;
   margin: 0 auto;
 }
 
 .profile-header {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 2rem;
   margin-bottom: 2rem;
-  text-align: center;
+  padding: 2rem;
+  @apply bg-card text-card-foreground;
+  border-radius: 1rem;
+  @apply shadow-sm border border-border;
 }
 
 @media (min-width: 768px) {
@@ -28,8 +31,8 @@
 .profile-avatar {
   width: 8rem;
   height: 8rem;
+  @apply bg-muted text-muted-foreground;
   border-radius: 9999px;
-  background-color: rgb(229, 231, 235);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,7 +50,9 @@
 }
 
 .profile-avatar-placeholder {
-  color: rgb(156, 163, 175);
+  width: 4rem;
+  height: 4rem;
+  @apply text-muted-foreground;
 }
 
 .profile-info {
@@ -55,44 +60,36 @@
 }
 
 .profile-name {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
+  font-size: 2rem;
   font-weight: 700;
-  color: rgb(17, 24, 39);
+  @apply text-foreground;
   margin-bottom: 0.5rem;
 }
 
 .profile-email {
-  color: rgb(107, 114, 128);
-  margin-bottom: 1rem;
+  font-size: 1rem;
+  @apply text-muted-foreground;
+  margin-bottom: 0.5rem;
 }
 
 .profile-role {
   display: inline-block;
-  background-color: rgb(219, 234, 254);
-  color: rgb(37, 99, 235);
+  padding: 0.25rem 0.75rem;
+  @apply bg-primary/10 text-primary;
+  border-radius: 9999px;
   font-size: 0.875rem;
   font-weight: 500;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
 }
 
 .profile-section {
-  background-color: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .profile-section-title {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  color: rgb(31, 41, 55);
+  @apply text-foreground;
   margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgb(229, 231, 235);
 }
 
 .profile-stats {
@@ -101,76 +98,73 @@
   gap: 1rem;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .profile-stats {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 .stat-card {
-  background-color: rgb(249, 250, 251);
-  border-radius: 0.5rem;
-  padding: 1rem;
+  padding: 1.5rem;
+  @apply bg-card text-card-foreground;
+  border-radius: 0.75rem;
+  @apply shadow-sm border border-border;
   text-align: center;
 }
 
 .stat-value {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
+  font-size: 2.25rem;
   font-weight: 700;
-  color: rgb(37, 99, 235);
+  @apply text-primary;
+  margin-bottom: 0.5rem;
 }
 
 .stat-label {
   font-size: 0.875rem;
-  color: rgb(107, 114, 128);
-  margin-top: 0.25rem;
+  @apply text-muted-foreground;
 }
 
 .achievements-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: 1rem;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .achievements-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
 .achievement-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem;
-  background-color: rgb(249, 250, 251);
-  border-radius: 0.5rem;
+  padding: 1.5rem;
+  @apply bg-card text-card-foreground;
+  border-radius: 0.75rem;
+  @apply shadow-sm border border-border;
   text-align: center;
 }
 
 .achievement-icon {
   width: 3rem;
   height: 3rem;
+  @apply bg-primary/10;
   border-radius: 9999px;
-  background-color: rgb(219, 234, 254);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.5rem;
-  color: rgb(37, 99, 235);
+  margin: 0 auto 1rem;
 }
 
 .achievement-title {
+  font-size: 1rem;
   font-weight: 600;
-  font-size: 0.875rem;
-  color: rgb(31, 41, 55);
-  margin-bottom: 0.25rem;
+  @apply text-foreground;
+  margin-bottom: 0.5rem;
 }
 
 .achievement-desc {
-  font-size: 0.75rem;
-  color: rgb(107, 114, 128);
+  font-size: 0.875rem;
+  @apply text-muted-foreground;
 }
 
 .form-group {
@@ -181,7 +175,7 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: rgb(55, 65, 81);
+  @apply text-foreground;
   margin-bottom: 0.5rem;
 }
 
@@ -189,15 +183,12 @@
   width: 100%;
   padding: 0.75rem;
   border-radius: 0.375rem;
-  border: 1px solid rgb(209, 213, 219);
-  background-color: rgb(249, 250, 251);
+  @apply border border-input bg-background text-foreground;
 }
 
 .form-input:focus {
   outline: none;
-  ring: 2px;
-  ring-color: rgb(59, 130, 246);
-  border-color: rgb(59, 130, 246);
+  @apply ring-2 ring-ring;
 }
 
 .form-actions {
@@ -207,24 +198,15 @@
 }
 
 .btn-cancel {
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 0.375rem;
-  background-color: white;
-  border: 1px solid rgb(209, 213, 219);
-  color: rgb(55, 65, 81);
   font-weight: 500;
-  font-size: 0.875rem;
+  @apply bg-secondary text-secondary-foreground hover:bg-secondary/90;
 }
 
 .btn-save {
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 0.375rem;
-  background-color: rgb(37, 99, 235);
-  color: white;
   font-weight: 500;
-  font-size: 0.875rem;
-}
-
-.btn-save:hover {
-  background-color: rgb(29, 78, 216);
+  @apply bg-primary text-primary-foreground hover:bg-primary/90;
 }
