@@ -24,8 +24,8 @@ const sampleUsers = [
 
 // Sample event data for demonstration
 const sampleEvents: Event[] = [
-  { 
-    id: '1', 
+  {
+    id: '1',
     title: 'Annual Tech Conference',
     description: 'Join us for the biggest tech event of the year with industry leaders and innovators.',
     startDate: new Date(new Date().setHours(9, 0, 0, 0)).toISOString(), // Set to 9:00 AM today
@@ -37,9 +37,9 @@ const sampleEvents: Event[] = [
     hasJoined: true,
     isCheckedIn: false
   },
-  { 
-    id: '2', 
-    title: 'Web Development Workshop', 
+  {
+    id: '2',
+    title: 'Web Development Workshop',
     description: 'Learn the latest web development techniques and tools in this hands-on workshop.',
     startDate: new Date(new Date().setHours(14, 0, 0, 0)).toISOString(), // Set to 2:00 PM today
     endDate: new Date(new Date().setHours(17, 0, 0, 0)).toISOString(), // Set to 5:00 PM today
@@ -50,9 +50,9 @@ const sampleEvents: Event[] = [
     hasJoined: true,
     isCheckedIn: false
   },
-  { 
-    id: '3', 
-    title: 'AI in Healthcare Symposium', 
+  {
+    id: '3',
+    title: 'AI in Healthcare Symposium',
     description: 'Explore how artificial intelligence is transforming healthcare delivery and research.',
     startDate: new Date(new Date(Date.now() + 24 * 60 * 60 * 1000).setHours(10, 0, 0, 0)).toISOString(), // Tomorrow 10:00 AM
     endDate: new Date(new Date(Date.now() + 24 * 60 * 60 * 1000).setHours(16, 0, 0, 0)).toISOString(), // Tomorrow 4:00 PM
@@ -78,7 +78,7 @@ export default function DashboardPage() {
 
   // Provide default user experience when no user data is available
   const userName = user?.name || 'Guest';
-  
+
   // Get user initials for avatar
   const getUserInitials = (name: string) => {
     return name
@@ -87,13 +87,13 @@ export default function DashboardPage() {
       .join('')
       .toUpperCase();
   };
-  
+
   // No longer blocking rendering when user is null
 
   const handleCheckIn = async (eventId: string) => {
     // Giả lập API call
-    const updatedEvents = sampleEvents.map(event => 
-      event.id === eventId 
+    const updatedEvents = sampleEvents.map(event =>
+      event.id === eventId
         ? { ...event, isCheckedIn: true }
         : event
     );
@@ -113,6 +113,25 @@ export default function DashboardPage() {
         {/* Overview Grid */}
         <div className="overview-grid">
           <div className="overview-main">
+            {/* Events and Calendar Section */}
+            <div className="section-container">
+              <h2 className="section-title">Events Overview</h2>
+              <div className="events-overview-grid">
+                <div className="events-section">
+                  <EventGroup
+                    events={sampleEvents}
+                    onStarClick={async (eventId) => {
+                      console.log('Star clicked for event:', eventId);
+                    }}
+                    onCheckIn={handleCheckIn}
+                  />
+                </div>
+                <div className="calendar-section">
+                  <MiniCalendar events={sampleEvents} />
+                </div>
+              </div>
+            </div>
+
             {/* Quick Actions */}
             <div className="section-container">
               <h2 className="section-title">Quick Actions</h2>
@@ -164,11 +183,6 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-
-          <div className="overview-sidebar">
-            {/* Mini Calendar */}
-            <MiniCalendar events={sampleEvents} />
-          </div>
         </div>
 
         {/* Leaderboard Preview */}
@@ -193,7 +207,7 @@ export default function DashboardPage() {
                   {sampleUsers.slice(0, 3).map((user, index) => {
                     const rank = index + 1;
                     return (
-                      <LeaderboardEntry 
+                      <LeaderboardEntry
                         key={user.id}
                         user={user}
                         rank={rank}
@@ -204,22 +218,10 @@ export default function DashboardPage() {
                 </tbody>
               </table>
             ) : (
-              <div className="leaderboard-empty">
-                Join events and maintain your streak to appear on the leaderboard!
-              </div>
+              <p className="no-data-message">No leaderboard data available</p>
             )}
           </div>
         </div>
-
-        {/* Events Section */}
-        <EventGroup 
-          events={sampleEvents}
-          onStarClick={async (eventId) => {
-            // Handle star click
-            console.log('Star clicked for event:', eventId);
-          }}
-          onCheckIn={handleCheckIn}
-        />
       </div>
     </main>
   );

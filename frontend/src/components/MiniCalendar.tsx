@@ -16,10 +16,10 @@ export function MiniCalendar({ events }: MiniCalendarProps) {
   // Tạo mảng các ngày trong tuần
   const weekDays = Array.from({ length: 7 }, (_, i) => {
     const date = addDays(startOfCurrentWeek, i);
-    const eventsOnDay = events.filter(event => 
+    const eventsOnDay = events.filter(event =>
       isSameDay(new Date(event.startDate), date)
     );
-    
+
     return {
       date,
       events: eventsOnDay,
@@ -42,8 +42,8 @@ export function MiniCalendar({ events }: MiniCalendarProps) {
           const needsCheckIn = events.some(event => !event.isCheckedIn);
 
           return (
-            <div 
-              key={date.toString()} 
+            <div
+              key={date.toString()}
               className={`calendar-day ${isToday ? 'today' : ''} ${hasEvents ? 'has-events' : ''} ${needsCheckIn ? 'needs-checkin' : ''}`}
             >
               <div className="day-header">
@@ -57,7 +57,7 @@ export function MiniCalendar({ events }: MiniCalendarProps) {
               {hasEvents && (
                 <div className="event-dots">
                   {events.map(event => (
-                    <div 
+                    <div
                       key={event.id}
                       className={`event-dot ${!event.isCheckedIn ? 'needs-checkin' : ''}`}
                       title={event.title}

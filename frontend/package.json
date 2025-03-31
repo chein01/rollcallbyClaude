@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.1",
+    "@types/react-transition-group": "^4.4.12",
     "axios": "^1.8.3",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.485.0",
@@ -17,6 +18,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.1.0",
+    "react-transition-group": "^4.4.5",
     "sonner": "^2.0.1"
   },
   "devDependencies": {
