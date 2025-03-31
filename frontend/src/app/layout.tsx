@@ -19,6 +19,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "RollCallByCusor",
   description: "A modern attendance tracking system",
+  icons: {
+    icon: [
+      {
+        url: '/icon.svg',
+        type: 'image/svg+xml',
+      }
+    ],
+  }
 };
 
 export default function RootLayout({
@@ -48,7 +56,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased font-hartwell`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased font-hartwell`} suppressHydrationWarning>
         <ThemeProvider>
           <div className="min-h-screen bg-background">
             <Providers>

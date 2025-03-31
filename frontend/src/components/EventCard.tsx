@@ -5,12 +5,23 @@ import './EventCard.css';
 import { format, isToday } from 'date-fns';
 
 interface EventCardProps {
-  event: Event;
+  event?: Event;
   onStarClick?: (eventId: string) => void;
   onCheckIn?: (eventId: string) => void;
 }
 
 export function EventCard({ event, onStarClick, onCheckIn }: EventCardProps) {
+  // Nếu event là undefined hoặc null, hiển thị placeholder
+  if (!event) {
+    return (
+      <div className="event-card">
+        <div className="priority-event-loading">
+          Loading event data...
+        </div>
+      </div>
+    );
+  }
+
   const needsCheckIn = isToday(new Date(event.startDate)) && !event.isCheckedIn;
 
   return (
@@ -72,28 +83,4 @@ export function EventCard({ event, onStarClick, onCheckIn }: EventCardProps) {
       </div>
     </div>
   );
-}
-
-.event - action - button: not([disabled]) {
-  @apply w - full text - center py - 2 px - 4 rounded - md bg - primary text - primary - foreground hover: bg - primary / 90 transition - colors relative overflow - hidden;
-}
-
-.event - action - button: not([disabled])::before {
-  content: '';
-  @apply absolute top - 0 left - 0 w - full h - full bg - white opacity - 0;
-  transform: translateX(-100 %) skewX(-15deg);
-  transition: transform 0.6s ease - out;
-}
-
-.event - action - button: not([disabled]): hover::before {
-  transform: translateX(100 %) skewX(-15deg);
-  @apply opacity - 20;
-}
-
-.event - action - button: not([disabled]):active {
-  transform: translateY(1px);
-}
-
-.event - action - button[disabled] {
-  @apply bg - muted text - muted - foreground cursor - not - allowed;
 } 

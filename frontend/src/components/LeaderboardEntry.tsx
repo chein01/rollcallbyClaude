@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import './LeaderboardEntry.css';
 
 interface LeaderboardUser {
   id: string;
@@ -43,12 +44,14 @@ export const LeaderboardEntry: React.FC<LeaderboardEntryProps> = ({ user, rank, 
         {rank <= 3 ? (
           <div className={`top-rank ${className}`}>{icon}</div>
         ) : (
-          rank
+          <div className="numeric-rank">{rank}</div>
         )}
       </td>
       <td>
         <div className="user-cell">
-          <div className="user-avatar">{getUserInitials(user.name)}</div>
+          <div className={`user-avatar ${className}`}>
+            {getUserInitials(user.name)}
+          </div>
           <div className="user-info">
             <span className="user-name">{user.name}</span>
             {user.email && showDetails && <span className="user-email">{user.email}</span>}

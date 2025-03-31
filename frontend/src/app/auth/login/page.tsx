@@ -23,7 +23,7 @@ export default function LoginPage() {
       // Example:
       // const response = await loginUser({ email, password });
       // dispatch(setCredentials(response));
-      
+
       // For now, simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       router.push('/today');
@@ -39,9 +39,9 @@ export default function LoginPage() {
   return (
     <AuthCard>
       <AuthLogo />
-      <AuthTitle 
-        title="Welcome Back" 
-        subtitle="Sign in to continue to Roll Call" 
+      <AuthTitle
+        title="Welcome Back"
+        subtitle="Sign in to continue to Roll Call"
       />
 
       {/* Login Form */}
@@ -81,15 +81,15 @@ export default function LoginPage() {
       <div className="mt-6 text-center space-y-2">
         <button
           onClick={() => router.push('/forgot-password')}
-          className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           Forgot Password?
         </button>
         <div className="flex items-center justify-center space-x-1">
-          <span className="text-sm text-gray-500">Don't have an account?</span>
+          <span className="text-sm text-muted-foreground">Don't have an account?</span>
           <button
             onClick={() => router.push('/auth/register')}
-            className="text-sm text-blue-500 hover:text-blue-700 font-medium transition-colors"
+            className="text-sm text-primary hover:text-primary/90 font-medium transition-colors"
           >
             Sign Up
           </button>

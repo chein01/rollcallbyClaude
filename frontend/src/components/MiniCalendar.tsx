@@ -1,73 +1,81 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { format, addDays, startOfWeek, isSameDay, isSameMonth } from 'date-fns';
 import { Event } from '@/types/event';
-import { format, startOfWeek, addDays, isToday, isSameDay } from 'date-fns';
-import { vi } from 'date-fns/locale';
-import './MiniCalendar.css';
+import { CalendarIcon } from 'lucide-react';
 
 interface MiniCalendarProps {
   events: Event[];
 }
 
 export function MiniCalendar({ events }: MiniCalendarProps) {
-  const today = new Date();
-  const startOfCurrentWeek = startOfWeek(today, { weekStartsOn: 1 }); // Bắt đầu từ thứ 2
+  const [currentDate] = useState(new Date());
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Tạo mảng các ngày trong tuần
-  const weekDays = Array.from({ length: 7 }, (_, i) => {
-    const date = addDays(startOfCurrentWeek, i);
-    const eventsOnDay = events.filter(event =>
-      isSameDay(new Date(event.startDate), date)
-    );
-
+  const startDate = startOfWeek(currentDate, { weekStartsOn: 1 }); // Start from Monday
+  const weekDays = Array.from({ length: 7 }).map((_, i) => {
+    const day = addDays(startDate, i);
     return {
-      date,
-      events: eventsOnDay,
-      isToday: isToday(date)
+      date: day,
+      dayName: format(day, 'EEE').substring(0, 1), // First letter of day name
+      dayNumber: format(day, 'd'),
+      isToday: isSameDay(day, new Date()),
+      isCurrentMonth: isSameMonth(day, currentDate),
+      hasEvent: events.some(event => isSameDay(new Date(event.startDate), day))
     };
   });
 
+  // Get current month name and year
+  const monthYear = format(currentDate, 'MMMM yyyy');
+
+  // Set mounted state
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Nếu chưa mounted, hiển thị phiên bản đơn giản
+  if (!isMounted) {
+    return (
+      <div className="mini-calendar-container">
+        <div className="mini-calendar-header">
+          <h3 className="mini-calendar-title">
+            <CalendarIcon className="inline-block mr-2 h-5 w-5" />
+            This Week
+          </h3>
+        </div>
+        <div className="priority-event-loading">Loading calendar...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="mini-calendar">
-      <div className="calendar-header">
-        <h3 className="calendar-title">Lịch tuần này</h3>
-        <span className="calendar-date">
-          {format(today, 'MMMM yyyy', { locale: vi })}
-        </span>
+    <div className="mini-calendar-container">
+      <div className="mini-calendar-header">
+        <h3 className="mini-calendar-title">
+          <CalendarIcon className="inline-block mr-2 h-5 w-5" />
+          This Week
+        </h3>
+        <span className="text-sm text-muted-foreground">{monthYear}</span>
       </div>
 
-      <div className="calendar-grid">
-        {weekDays.map(({ date, events, isToday }) => {
-          const hasEvents = events.length > 0;
-          const needsCheckIn = events.some(event => !event.isCheckedIn);
+      <div className="mini-calendar-days">
+        {weekDays.map((day, index) => (
+          <div key={`day-${index}`} className="mini-calendar-day">
+            {day.dayName}
+          </div>
+        ))}
+      </div>
 
-          return (
-            <div
-              key={date.toString()}
-              className={`calendar-day ${isToday ? 'today' : ''} ${hasEvents ? 'has-events' : ''} ${needsCheckIn ? 'needs-checkin' : ''}`}
-            >
-              <div className="day-header">
-                <span className="day-name">
-                  {format(date, 'EEEEEE', { locale: vi })}
-                </span>
-                <span className="day-number">
-                  {format(date, 'd')}
-                </span>
-              </div>
-              {hasEvents && (
-                <div className="event-dots">
-                  {events.map(event => (
-                    <div
-                      key={event.id}
-                      className={`event-dot ${!event.isCheckedIn ? 'needs-checkin' : ''}`}
-                      title={event.title}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
+      <div className="mini-calendar-grid">
+        {weekDays.map((day, index) => (
+          <div
+            key={`date-${index}`}
+            className={`mini-calendar-date ${day.isToday ? 'today' : ''} ${day.isCurrentMonth ? 'active' : ''} ${day.hasEvent ? 'has-event' : ''}`}
+          >
+            {day.dayNumber}
+          </div>
+        ))}
       </div>
     </div>
   );

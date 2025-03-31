@@ -8,11 +8,11 @@ interface AuthCardProps {
 
 export function AuthCard({ children }: AuthCardProps) {
   return (
-    <main className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-white to-gray-50">
+    <main className="min-h-screen flex items-center justify-center p-4 bg-background">
       {/* Background blur circles */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-blue-100 blur-3xl opacity-30" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-purple-100 blur-3xl opacity-30" />
+        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-blue-100 dark:bg-blue-900/20 blur-3xl opacity-30" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-purple-100 dark:bg-purple-900/20 blur-3xl opacity-30" />
       </div>
 
       <div className="auth-card">

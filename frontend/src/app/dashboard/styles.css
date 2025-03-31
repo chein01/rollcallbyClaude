@@ -1,5 +1,5 @@
 .dashboard-container {
-  @apply min-h-screen bg-background p-6;
+  @apply min-h-screen bg-gray-100 dark:bg-background p-6 space-y-8;
 }
 
 .dashboard-content {
@@ -20,6 +20,7 @@
 
 .section-container {
   @apply mb-8;
+  width: 100%;
 }
 
 .section-header {
@@ -195,6 +196,9 @@
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: 1rem;
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -204,10 +208,8 @@
 }
 
 .stat-card {
-  @apply bg-card text-card-foreground;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  @apply shadow-sm border border-border;
+  @apply bg-white dark:bg-gray-800 border-2 border-gray-400 dark:border-gray-700 rounded-lg p-4 shadow-lg;
+  margin: 0;
 }
 
 .stat-label {
@@ -246,9 +248,7 @@
 }
 
 .leaderboard-card {
-  @apply bg-card text-card-foreground;
-  border-radius: 0.75rem;
-  @apply shadow-sm border border-border;
+  @apply bg-white dark:bg-card text-card-foreground rounded-lg border-2 border-gray-400 dark:border-gray-700 shadow-lg;
   overflow: hidden;
 }
 
@@ -350,17 +350,16 @@
 }
 
 .leaderboard-table th {
+  @apply text-muted-foreground bg-gray-200 dark:bg-muted/50 border-b-2 border-gray-400 dark:border-gray-700;
   padding: 1rem;
   text-align: left;
   font-size: 0.875rem;
   font-weight: 600;
-  @apply text-muted-foreground bg-muted/50;
-  @apply border-b border-border;
 }
 
 .leaderboard-table td {
+  @apply border-b-2 border-gray-400 dark:border-gray-700 text-foreground;
   padding: 1rem;
-  @apply border-b border-border text-foreground;
 }
 
 .leaderboard-table tr:last-child td {
@@ -423,11 +422,24 @@
 }
 
 .event-card {
-  @apply bg-card text-card-foreground rounded-lg p-6 border shadow-sm relative;
+  @apply bg-white dark:bg-card text-card-foreground rounded-lg p-6 border-2 border-gray-400 dark:border-gray-700 shadow-lg;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+/* Add yellow border to events needing check-in */
+.event-card:has(.event-action-button:not([disabled])) {
+  @apply border-yellow-500 dark:border-yellow-400 shadow-md shadow-yellow-100 dark:shadow-yellow-900/20;
 }
 
 .event-header {
-  @apply flex flex-col gap-2 mb-4;
+  @apply flex flex-col gap-2;
 }
 
 .event-stars-badge {
@@ -443,11 +455,12 @@
 }
 
 .event-description {
-  @apply text-sm text-muted-foreground mb-4;
+  @apply text-sm text-gray-900 dark:text-gray-300 font-medium;
+  flex: 1;
 }
 
 .event-footer {
-  @apply flex flex-col gap-2 mb-4;
+  @apply flex flex-col gap-2 mt-auto pt-4;
 }
 
 .event-location,
@@ -456,13 +469,14 @@
 }
 
 .event-action-button {
-  @apply w-full text-center py-2 px-4 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors;
+  @apply w-full text-center py-2 px-4 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors mt-4;
 }
 
 .events-overview-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
+  min-height: 300px;
 }
 
 @media (max-width: 768px) {
@@ -472,28 +486,121 @@
 }
 
 .priority-event-container {
-  @apply bg-card text-card-foreground rounded-lg border shadow-sm overflow-hidden;
-  height: 100%;
+  @apply flex flex-col bg-white dark:bg-gray-800 border-2 border-gray-400 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden;
+  height: 400px;
+  width: 100%;
+}
+
+/* Add blue highlight for Today's Events */
+.priority-event-container:first-of-type {
+  @apply border-blue-500 dark:border-blue-400 shadow-md shadow-blue-200 dark:shadow-blue-900/20;
 }
 
 .priority-event-header {
-  @apply p-4 border-b border-border;
+  @apply p-4 border-b-2 border-gray-400 dark:border-gray-700;
+  height: 60px;
+  display: flex;
+  align-items: center;
 }
 
 .priority-event-title {
   @apply text-lg font-semibold flex items-center gap-2;
 }
 
+.priority-event-content {
+  @apply flex-1;
+  height: calc(100% - 60px);
+  position: relative;
+  overflow: hidden;
+}
+
 .completed-message {
-  @apply flex flex-col items-center justify-center p-8 text-center h-full;
+  @apply flex flex-col items-center justify-center p-8 text-center;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.2) 100%);
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
 }
 
 .completed-message svg {
-  @apply text-green-500 h-12 w-12 mb-2;
+  @apply h-16 w-16 mb-4;
+  color: #10b981;
+  animation: success-pulse 2s infinite ease-in-out, rotate-in 0.5s ease-out;
 }
 
 .completed-message p {
-  @apply text-lg font-medium text-foreground;
+  @apply text-lg font-medium text-foreground mb-3;
+  animation: fade-in-up 0.5s ease-out 0.3s both;
+}
+
+.completed-message .achievement {
+  @apply mt-4 py-2 px-4 rounded-full text-sm;
+  background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
+  color: white;
+  animation: fade-in-up 0.5s ease-out 0.6s both;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.completed-message .suggestion {
+  @apply text-sm text-muted-foreground mt-3;
+  animation: fade-in-up 0.5s ease-out 0.9s both;
+}
+
+@keyframes success-pulse {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0px rgba(16, 185, 129, 0.7));
+  }
+
+  50% {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.7));
+  }
+
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0px rgba(16, 185, 129, 0.7));
+  }
+}
+
+@keyframes rotate-in {
+  0% {
+    transform: rotate(-90deg) scale(0.3);
+    opacity: 0;
+  }
+
+  100% {
+    transform: rotate(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes confetti {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 100% 100%;
+  }
 }
 
 .event-transition-enter {
@@ -518,7 +625,7 @@
 }
 
 .mini-calendar-container {
-  @apply bg-card text-card-foreground rounded-lg border shadow-sm p-4;
+  @apply bg-white dark:bg-card text-card-foreground rounded-lg border-2 border-gray-400 dark:border-gray-700 shadow-lg p-4;
 }
 
 .mini-calendar-header {
@@ -542,7 +649,7 @@
 }
 
 .mini-calendar-date {
-  @apply text-center text-sm p-2 rounded-md relative;
+  @apply text-center text-sm p-2 rounded-md relative font-semibold text-gray-900 dark:text-gray-100;
 }
 
 .mini-calendar-date.active {
@@ -563,7 +670,7 @@
 }
 
 .mini-calendar-date:not(.active) {
-  @apply text-muted-foreground/60;
+  @apply text-gray-700 dark:text-gray-300 font-medium;
 }
 
 @keyframes pulse {
@@ -581,4 +688,187 @@
 .event-action-button:hover {
   animation: pulse 1.5s infinite;
   @apply shadow-md;
+}
+
+.priority-event-loading {
+  @apply p-6 flex items-center justify-center text-muted-foreground;
+  height: 200px;
+}
+
+.dashboard-section {
+  @apply bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow;
+}
+
+.events-overview {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.events-section {
+  @apply bg-white dark:bg-gray-800 border-2 border-gray-400 dark:border-gray-700 rounded-lg p-4 shadow-lg;
+  position: relative;
+}
+
+/* Emphasize Today's Events section */
+.events-section:first-child {
+  @apply border-2 border-blue-500 dark:border-blue-400 shadow-md shadow-blue-200 dark:shadow-blue-900/20;
+}
+
+.completed-section {
+  @apply bg-gradient-to-br from-emerald-50 to-emerald-100/70 dark:bg-emerald-900/10 border-2 border-emerald-300 dark:border-emerald-800 rounded-lg p-6 shadow-lg;
+}
+
+.quick-actions {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-4 my-6;
+}
+
+.quick-action-card {
+  @apply bg-white dark:bg-gray-800 border-2 border-gray-400 dark:border-gray-700 rounded-lg p-4 shadow-lg hover:shadow-xl hover:-translate-y-1 hover:border-gray-500 dark:hover:border-gray-600 transition-all duration-200;
+}
+
+.stats-grid {
+  @apply grid grid-cols-2 md:grid-cols-4 gap-4 my-6;
+}
+
+.leaderboard-section {
+  @apply bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg p-4 shadow-sm;
+}
+
+.section-title {
+  @apply text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4;
+}
+
+.section-subtitle {
+  @apply text-sm text-gray-500 dark:text-gray-400;
+}
+
+/* Leaderboard Dashboard Card */
+.leaderboard-dashboard-card {
+  @apply bg-transparent dark:bg-transparent border-0 rounded-lg shadow-none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.leaderboard-top-users {
+  @apply flex flex-col md:flex-row gap-6 justify-between;
+}
+
+.top-user-card {
+  @apply bg-white dark:bg-background border-2 border-gray-400 dark:border-gray-700 rounded-xl p-6 flex-1 relative shadow-lg hover:shadow-xl transition-all flex flex-col items-center text-center;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.top-user-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.top-user-card.rank-1 {
+  @apply border-yellow-500 dark:border-yellow-400 bg-gradient-to-b from-yellow-100 to-white dark:from-yellow-900/20 dark:to-background;
+  z-index: 2;
+  box-shadow: 0 8px 20px rgba(234, 179, 8, 0.15);
+}
+
+.top-user-card.rank-1:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 32px rgba(234, 179, 8, 0.2);
+}
+
+.top-user-card.rank-2 {
+  @apply border-gray-500 dark:border-gray-400 bg-gradient-to-b from-gray-100 to-white dark:from-gray-800 dark:to-background;
+  box-shadow: 0 6px 16px rgba(107, 114, 128, 0.15);
+}
+
+.top-user-card.rank-2:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(107, 114, 128, 0.2);
+}
+
+.top-user-card.rank-3 {
+  @apply border-orange-500 dark:border-orange-400 bg-gradient-to-b from-orange-100 to-white dark:from-orange-900/20 dark:to-background;
+  box-shadow: 0 6px 16px rgba(234, 88, 12, 0.15);
+}
+
+.top-user-card.rank-3:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(234, 88, 12, 0.2);
+}
+
+.medal {
+  @apply w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-md border-2;
+}
+
+.medal.gold {
+  @apply bg-gradient-to-r from-purple-100 to-purple-200 border-yellow-400 text-yellow-800 dark:text-yellow-800;
+  box-shadow: 0 4px 8px rgba(234, 179, 8, 0.25);
+}
+
+.medal.silver {
+  @apply bg-gradient-to-r from-gray-300 to-gray-400 border-gray-200 text-gray-800 dark:text-gray-800;
+  box-shadow: 0 4px 8px rgba(107, 114, 128, 0.25);
+}
+
+.medal.bronze {
+  @apply bg-gradient-to-r from-orange-300 to-orange-500 border-orange-200 text-orange-900 dark:text-orange-900;
+  box-shadow: 0 4px 8px rgba(234, 88, 12, 0.25);
+}
+
+.medal-badge {
+  @apply absolute -top-6 left-1/2 transform -translate-x-1/2;
+}
+
+.user-avatar-container {
+  @apply mt-7 mb-4;
+}
+
+.user-avatar-large {
+  @apply w-20 h-20 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-xl border-2 border-white dark:border-gray-700;
+}
+
+.gold-bg {
+  @apply bg-gradient-to-br from-yellow-400 to-yellow-600;
+  box-shadow: 0 0 15px 5px rgba(234, 179, 8, 0.15);
+}
+
+.silver-bg {
+  @apply bg-gradient-to-br from-gray-400 to-gray-600;
+  box-shadow: 0 0 10px 5px rgba(107, 114, 128, 0.15);
+}
+
+.bronze-bg {
+  @apply bg-gradient-to-br from-orange-400 to-orange-600;
+  box-shadow: 0 0 10px 5px rgba(234, 88, 12, 0.15);
+}
+
+.user-info {
+  @apply mt-2;
+}
+
+.user-name {
+  @apply text-2xl font-bold text-black dark:text-gray-100;
+}
+
+.user-streak {
+  @apply text-lg font-semibold text-blue-700 dark:text-blue-400 my-2;
+}
+
+.user-stats {
+  @apply text-sm text-gray-900 dark:text-gray-300 mt-2 font-medium;
+}
+
+.stat {
+  @apply inline-flex items-center mx-1;
+}
+
+.view-more-section {
+  @apply flex justify-center mt-4;
+}
+
+.view-more-btn {
+  @apply px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-md transition-colors font-medium text-sm;
+}
+
+/* Fix user text color issue in full leaderboard */
+.leaderboard-entry .user-col {
+  @apply text-black dark:text-gray-100;
 }

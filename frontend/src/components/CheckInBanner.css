@@ -3,6 +3,10 @@
   animation: slide-down 0.3s ease-out;
 }
 
+.checkin-banner.success {
+  @apply bg-emerald-500 border-2 border-emerald-600;
+}
+
 .banner-content {
   @apply container mx-auto px-4 py-3 flex items-center gap-3 justify-between max-w-7xl;
 }
@@ -19,53 +23,136 @@
   @apply text-yellow-100;
 }
 
+.banner-event-name.success {
+  @apply text-emerald-100;
+}
+
 .banner-action {
-  @apply px-4 py-1.5 bg-white text-yellow-500 rounded-full text-sm font-medium 
-    hover:bg-yellow-50 transition-colors whitespace-nowrap;
+  @apply px-4 py-1.5 bg-white text-yellow-500 rounded-full text-sm font-medium hover:bg-yellow-50 transition-colors whitespace-nowrap;
+}
+
+.banner-action.success {
+  @apply text-emerald-600 hover:bg-emerald-50;
 }
 
 .banner-close {
-  @apply absolute right-4 top-1/2 -translate-y-1/2 text-white/80 
-    hover:text-white transition-colors;
+  @apply absolute right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white transition-colors;
 }
 
 @keyframes slide-down {
   from {
     transform: translateY(-100%);
   }
+
   to {
     transform: translateY(0);
   }
 }
 
 .checkin-notification {
-  @apply bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4
-    flex items-center justify-between gap-3 animate-fade-in;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 3.5rem;
+  @apply bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-400 dark:border-yellow-600 shadow-md;
+}
+
+.checkin-notification.success {
+  @apply bg-emerald-50 dark:bg-emerald-900/20 border-2 border-emerald-500 dark:border-emerald-500 shadow-md;
 }
 
 .notification-content {
-  @apply flex items-center gap-3 flex-1 min-w-0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
 }
 
 .notification-icon {
-  @apply h-4 w-4 text-yellow-500 flex-shrink-0;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  @apply text-yellow-600 dark:text-yellow-400;
+}
+
+.notification-icon.success {
+  @apply text-emerald-600 dark:text-emerald-400;
+}
+
+.notification-emoji {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  animation: bounce-rotate 1s infinite;
 }
 
 .notification-text {
-  @apply text-sm text-yellow-800 flex-1 truncate;
+  margin: 0;
+  flex: 1;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  @apply text-yellow-800 dark:text-yellow-200;
 }
 
-.event-name {
-  @apply font-medium text-yellow-900;
+.notification-text.success {
+  @apply text-emerald-800 dark:text-emerald-200;
 }
 
 .notification-action {
-  @apply px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium 
-    hover:bg-yellow-200 transition-colors whitespace-nowrap flex-shrink-0;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  margin-left: 0.75rem;
+  white-space: nowrap;
+  @apply bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 hover:bg-yellow-200 dark:hover:bg-yellow-700 rounded-md transition-colors shadow-sm;
+}
+
+.notification-action.success {
+  @apply bg-emerald-100 dark:bg-emerald-800 text-emerald-800 dark:text-emerald-100 hover:bg-emerald-200 dark:hover:bg-emerald-700 shadow-sm;
 }
 
 .notification-close {
-  @apply text-yellow-600 hover:text-yellow-800 transition-colors flex-shrink-0;
+  padding: 0.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.5rem;
+  @apply text-yellow-600 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-200;
+}
+
+.notification-close.success {
+  @apply text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-200;
+}
+
+.event-name {
+  @apply font-medium text-yellow-900 dark:text-yellow-100;
+}
+
+.event-name.success {
+  @apply text-emerald-900 dark:text-emerald-100;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+@keyframes bounce-rotate {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-5px) rotate(5deg);
+  }
 }
 
 @keyframes fade-in {
@@ -73,12 +160,9 @@
     opacity: 0;
     transform: translateY(-0.5rem);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-
-.animate-fade-in {
-  animation: fade-in 0.2s ease-out;
-} 

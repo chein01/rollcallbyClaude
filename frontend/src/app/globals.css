@@ -53,30 +53,37 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply text-foreground font-semibold;
   }
-  
+
   p {
     @apply text-foreground;
   }
-  
+
   .text-muted {
     @apply text-muted-foreground font-medium;
   }
-  
-  a:hover, button:hover {
+
+  a:hover,
+  button:hover {
     @apply text-foreground transition-colors;
   }
-  
+
   html {
     transition: background-color 0.3s ease, color 0.3s ease;
   }
-  
+
   .text-foreground\/60 {
     @apply text-foreground/70 hover:text-foreground/90;
   }
@@ -84,23 +91,15 @@
 
 @layer components {
   .input-field {
-    @apply w-full px-4 py-3 rounded-2xl border border-input
-    focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent 
-    transition-all duration-200 ease-in-out
-    bg-background text-foreground placeholder:text-muted-foreground;
+    @apply w-full px-4 py-3 rounded-2xl border border-input focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-200 ease-in-out bg-background text-foreground placeholder:text-muted-foreground;
   }
 
   .auth-button {
-    @apply w-full px-4 py-3 rounded-2xl font-medium text-primary-foreground 
-    bg-primary hover:bg-primary/90
-    transition-all duration-200 ease-in-out 
-    shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply w-full px-4 py-3 rounded-2xl font-medium text-primary-foreground bg-primary hover:bg-primary/90 transition-all duration-200 ease-in-out shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .auth-card {
-    @apply w-full max-w-md mx-auto p-8 rounded-3xl 
-    bg-card text-card-foreground
-    shadow-xl border;
+    @apply w-full max-w-md mx-auto p-8 rounded-3xl bg-card text-card-foreground shadow-xl border;
   }
 
   .auth-title {

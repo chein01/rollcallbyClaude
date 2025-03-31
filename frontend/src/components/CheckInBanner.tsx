@@ -1,51 +1,73 @@
-import { Event } from '@/types/event';
-import { AlertCircle, X } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { CheckCircle, X, PartyPopper } from 'lucide-react';
 import './CheckInBanner.css';
+import { Event } from '@/types/event';
 
 interface CheckInBannerProps {
-  events: Event[];
+  pendingEvents: Event[];
+  onClose: () => void;
+  lastCheckedInEvent?: Event;
 }
 
-export function CheckInBanner({ events }: CheckInBannerProps) {
-  const [isVisible, setIsVisible] = useState(true);
-  
-  // Filter events that need check-in today
-  const pendingEvents = events.filter(event => 
-    new Date(event.startDate).toDateString() === new Date().toDateString() && 
-    !event.isCheckedIn
-  );
+export function CheckInBanner({
+  pendingEvents,
+  onClose,
+  lastCheckedInEvent
+}: CheckInBannerProps) {
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
-  if (!isVisible || pendingEvents.length === 0) {
+  // Show success notification when lastCheckedInEvent changes
+  useEffect(() => {
+    if (lastCheckedInEvent) {
+      setShowSuccess(true);
+    }
+  }, [lastCheckedInEvent]);
+
+  // If there are no pending events or we're showing a success message
+  if (pendingEvents.length === 0 && !showSuccess) {
     return null;
   }
+
+  // Show success message if we have a lastCheckedInEvent
+  if (showSuccess && lastCheckedInEvent) {
+    return (
+      <div className="checkin-notification success" style={{ borderColor: '#10b981', backgroundColor: '#ecfdf5' }}>
+        <div className="notification-content">
+          <PartyPopper className="notification-icon success" style={{ color: '#059669' }} />
+          <p className="notification-text success" style={{ color: '#047857' }}>
+            Successfully checked in for <span className="event-name success" style={{ color: '#065f46' }}>{lastCheckedInEvent.title}</span>!
+          </p>
+        </div>
+        <button className="notification-close success" onClick={onClose} aria-label="Close notification" style={{ color: '#059669' }}>
+          <X size={16} />
+        </button>
+      </div>
+    );
+  }
+
+  // Count how many events need check-in
+  const eventCount = pendingEvents.length;
+  const eventText = eventCount === 1 ? 'event' : 'events';
 
   return (
     <div className="checkin-notification">
       <div className="notification-content">
-        <AlertCircle className="notification-icon" />
+        <CheckCircle className="notification-icon" />
         <p className="notification-text">
-          {pendingEvents.length === 1 ? (
-            <>
-              You need to check in for <span className="event-name">{pendingEvents[0].title}</span>
-            </>
+          {eventCount === 1 ? (
+            <>Please check in for <span className="event-name">{pendingEvents[0].title}</span></>
           ) : (
-            <>
-              You have <span className="font-semibold">{pendingEvents.length} events</span> to check in today
-            </>
+            <>You have {eventCount} {eventText} to check in today</>
           )}
         </p>
-        <Link href="/checkin/today" className="notification-action">
-          Check in now
-        </Link>
+        <a href="/dashboard" className="notification-action">Check in now</a>
       </div>
-      <button 
+      <button
         className="notification-close"
-        onClick={() => setIsVisible(false)}
+        onClick={onClose}
         aria-label="Close notification"
       >
-        <X className="h-3 w-3" />
+        <X size={16} />
       </button>
     </div>
   );
