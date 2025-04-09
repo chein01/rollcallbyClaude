@@ -60,7 +60,7 @@ export function CheckInBanner({
             <>You have {eventCount} {eventText} to check in today</>
           )}
         </p>
-        <a href="/dashboard" className="notification-action">Check in now</a>
+        <a href="/events" className="notification-action">Check in now</a>
       </div>
       <button
         className="notification-close"
